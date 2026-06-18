@@ -1,1 +1,3 @@
 # SKN32-2nd-5Team
+
+## Git Convention
