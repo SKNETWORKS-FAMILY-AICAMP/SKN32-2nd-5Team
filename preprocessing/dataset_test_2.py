@@ -58,7 +58,7 @@ def majority_vote(*labels: str) -> str:
         if labels[0] == labels[1]:
             return labels[0]
 
-        return ""
+        return "r"
 
     # 3개 이상은 기존 다수결
     return Counter(labels).most_common(1)[0][0]
