@@ -4,3 +4,4 @@ matplotlib
 seaborn
 transformers
 tabulate
+scikit-learn
