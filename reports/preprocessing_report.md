@@ -83,7 +83,7 @@ Tokenizer : KLUE/BERT SentencePiece
 |P99|41.0|
 
 
-![image](..\reports\token_length_distribution.png)
+![image](token_length_distribution.png)
 
 ---
 

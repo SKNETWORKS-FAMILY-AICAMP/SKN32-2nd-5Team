@@ -15,7 +15,8 @@ DATA_PATH = Path("../output/analysis_dataset.json")
 
 REPORT_DIR = Path("../reports")
 REPORT_PATH = REPORT_DIR / "preprocessing_report.md"
-HIST_PATH = REPORT_DIR / "token_length_distribution.png"
+HIST_PNG = "token_length_distribution.png"
+HIST_PATH = REPORT_DIR / HIST_PNG
 
 TOKENIZER_NAME = "klue/bert-base"
 
@@ -472,7 +473,7 @@ Tokenizer : KLUE/BERT SentencePiece
 |P99|{token_stats['p99']}|
 
 
-![image]({HIST_PATH})
+![image]({HIST_PNG})
 
 ---
 
