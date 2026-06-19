@@ -7,12 +7,17 @@ import re
 # =========================
 # 설정
 # =========================
-DATA_ROOT = Path("./data")
+DATA_ROOT = Path("../data")
 
 TRAIN_FILE_NAME = "Training.json"
 VALID_FILE_NAME = "Validation.json"
 
 TARGET_KEYS = [
+    # "고객의도",
+    # "상담사의도",
+    # "개체명 ",
+    # "용어사전",
+    # "지식베이스",
     "고객질문(요청)",
     "상담사질문(요청)",
     "고객답변",
