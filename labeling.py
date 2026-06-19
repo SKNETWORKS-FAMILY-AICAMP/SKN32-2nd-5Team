@@ -13,12 +13,10 @@ TRAIN_FILE_NAME = "Training.json"
 VALID_FILE_NAME = "Validation.json"
 
 TARGET_KEYS = [
-    "고객의도",
-    "상담사의도",
-    "개체명 ",
-    "용어사전",
-    "지식베이스",
     "고객질문(요청)",
+    "상담사질문(요청)",
+    "고객답변 ",
+    "상담사답변",
 ]
 
 CHURN_KEYWORDS = (
@@ -38,6 +36,26 @@ CHURN_KEYWORDS = (
     "중도인출",
     "매도",
     "정리",
+    "금액.*많",
+    "보험료.*많",
+    "돈.*많",
+    "많이.*나가",
+    "너무.*많",
+    "비싸",
+    "부담",
+    "줄이",
+    "없애",
+    "취소",
+    "변경",
+    "안되",
+    "안됩니다",
+    "고민",
+    "사망일",
+    "사망진단서",
+    "금융감독원",
+    "금감원",
+    "만기",
+
 )
 
 CHURN_PATTERN = re.compile("|".join(map(re.escape, CHURN_KEYWORDS)))
