@@ -53,6 +53,14 @@ def majority_vote(*labels: str) -> str:
     if not labels:
         return ""
 
+    # 2개일 때는 둘이 같아야만 인정
+    if len(labels) == 2:
+        if labels[0] == labels[1]:
+            return labels[0]
+
+        return ""
+
+    # 3개 이상은 기존 다수결
     return Counter(labels).most_common(1)[0][0]
 
 
@@ -135,7 +143,7 @@ def main():
             y_true = majority_vote(
                 worker_1,
                 worker_2,
-                worker_3,
+                # worker_3,
             )
 
             if not y_true or not y_pred:
