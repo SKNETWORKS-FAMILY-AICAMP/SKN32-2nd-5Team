@@ -13,7 +13,7 @@ from labeling import (
 # =========================
 # 설정
 # =========================
-OUTPUT_DIR = Path("./output")
+OUTPUT_DIR = Path("../output")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 REVIEW_SAMPLE_RATE = 0.01  # 약 1%

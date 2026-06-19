@@ -7,8 +7,8 @@ import csv
 # 설정
 # =========================
 
-REVIEW_FILE = Path("./output/review_dataset.csv")
-ERROR_FILE = Path("./output/error_cases.csv")
+REVIEW_FILE = Path("../output/review_dataset.csv")
+ERROR_FILE = Path("../output/error_cases.csv")
 
 
 # =========================
