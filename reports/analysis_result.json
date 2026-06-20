@@ -1,15 +1,43 @@
 {
     "dataset_count": {
         "raw": {
-            "total": 98177,
-            "train": 87265,
-            "valid": 10912
+            "total": 98119,
+            "train": 87209,
+            "valid": 10910,
+            "num_labels": 2
         },
-        "num_labels": 2,
+        "text_cleaning": {
+            "before_total": 98177,
+            "none_count": 0,
+            "empty_removed": 58,
+            "after_total": 98119,
+            "removed_csv": "../output/empty_text_removed.csv"
+        },
         "after_dedup": {
-            "total": 62822,
-            "train": 57301,
-            "valid": 5521
+            "total": 62755,
+            "train": 57238,
+            "valid": 5517
+        },
+        "final": {
+            "total": 62755,
+            "train": 57238,
+            "valid": 5517
+        }
+    },
+    "duplicate": {
+        "total": 35364,
+        "train": 29971,
+        "valid": 2216,
+        "cross": 3177,
+        "after_dedup": {
+            "total": 62755,
+            "train": 57238,
+            "valid": 5517
+        },
+        "saved_csv": {
+            "duplicate_train": "../output/duplicate_train.csv",
+            "duplicate_valid": "../output/duplicate_valid.csv",
+            "duplicate_cross": "../output/duplicate_cross.csv"
         }
     },
     "label_distribution": {
@@ -17,11 +45,11 @@
             "train": {
                 "churn_signal": {
                     "count": 7025,
-                    "ratio": 8.05
+                    "ratio": 8.06
                 },
                 "retain": {
-                    "count": 80240,
-                    "ratio": 91.95
+                    "count": 80184,
+                    "ratio": 91.94
                 }
             },
             "valid": {
@@ -30,7 +58,7 @@
                     "ratio": 8.89
                 },
                 "retain": {
-                    "count": 9942,
+                    "count": 9940,
                     "ratio": 91.11
                 }
             }
@@ -38,38 +66,32 @@
         "after_dedup": {
             "train": {
                 "churn_signal": {
-                    "count": 5497,
-                    "ratio": 9.59
+                    "count": 5494,
+                    "ratio": 9.6
                 },
                 "retain": {
-                    "count": 51804,
-                    "ratio": 90.41
+                    "count": 51744,
+                    "ratio": 90.4
                 }
             },
             "valid": {
                 "churn_signal": {
                     "count": 587,
-                    "ratio": 10.63
+                    "ratio": 10.64
                 },
                 "retain": {
-                    "count": 4934,
-                    "ratio": 89.37
+                    "count": 4930,
+                    "ratio": 89.36
                 }
             }
         }
-    },
-    "duplicate": {
-        "total": 35355,
-        "train": 29964,
-        "valid": 2214,
-        "cross": 3177
     },
     "char_length": {
         "train": {
             "mean": 24.74,
             "median": 21.0,
             "std": 15.49,
-            "min": 0,
+            "min": 1,
             "max": 356,
             "p90": 44.0,
             "p95": 54.0,
@@ -91,21 +113,25 @@
             "mean": 13.93,
             "median": 12.0,
             "std": 8.27,
-            "min": 0,
+            "min": 1,
             "max": 176,
             "p90": 24.0,
             "p95": 29.0,
-            "p99": 43.0
+            "p99": 43.0,
+            "over_p95": 2859,
+            "over_p99": 544
         },
         "valid": {
-            "mean": 13.97,
+            "mean": 13.98,
             "median": 12.0,
             "std": 8.71,
             "min": 1,
             "max": 130,
             "p90": 25.0,
             "p95": 31.0,
-            "p99": 45.0
+            "p99": 45.0,
+            "over_p95": 265,
+            "over_p99": 54
         }
     },
     "tokenizer": {
@@ -113,31 +139,12 @@
         "class": "BertTokenizer",
         "vocab_size": 32000
     },
-    "data_quality": {
-        "empty_text": {
-            "train": 2,
-            "valid": 0
-        },
-        "short_text": {
-            "threshold": 5,
-            "train": 518,
-            "valid": 48
-        },
-        "long_text": {
-            "threshold": 512,
-            "train": 0,
-            "valid": 0
-        },
-        "null_text": {
-            "train": 0,
-            "valid": 0
-        }
-    },
     "saved_csv": {
-        "duplicate_train": "../temp/duplicate_train.csv",
-        "duplicate_valid": "../temp/duplicate_valid.csv",
-        "duplicate_cross": "../temp/duplicate_cross.csv",
-        "empty_text_train": "../temp/empty_text_train.csv",
-        "empty_text_valid": "../temp/empty_text_valid.csv"
+        "duplicate_train": "../output/duplicate_train.csv",
+        "duplicate_valid": "../output/duplicate_valid.csv",
+        "duplicate_cross": "../output/duplicate_cross.csv",
+        "empty_text_removed": "../output/empty_text_removed.csv",
+        "clean_train": "../output/clean_train.csv",
+        "clean_valid": "../output/clean_valid.csv"
     }
 }
