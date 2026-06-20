@@ -3,3 +3,5 @@ numpy
 matplotlib
 transformers
 scikit-learn
+torch
+tqdm
