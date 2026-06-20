@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 import json
 import matplotlib
@@ -9,76 +10,33 @@ import pandas as pd
 from transformers import AutoTokenizer
 
 #################################################
-# FONT (한글 깨짐 방지)
+# CONFIG (필요 시 외부에서 오버라이드 가능)
 #################################################
-_FONT_PATH = "../temp/NanumGothic.ttf"
-KR_FONT    = fm.FontProperties(fname=_FONT_PATH)
+DATA_PATH  = Path("../output/analysis_dataset.json")
+REPORT_DIR = Path("../reports")
+CSV_DIR    = Path("../output")
 
-def _apply_kr_font(ax):
-    """ax의 title, xlabel, ylabel, tick label에 한글 폰트 일괄 적용"""
+TOKENIZER_NAME  = "klue/bert-base"
+_FONT_PATH = "../temp/NanumGothic.ttf"
+
+#################################################
+# 내부 유틸리티
+#################################################
+def _get_kr_font() -> fm.FontProperties:
+    return fm.FontProperties(fname=_FONT_PATH)
+
+
+def _apply_kr_font(ax: plt.Axes, font: fm.FontProperties) -> None:
+    """ax의 모든 텍스트 요소에 한글 폰트 일괄 적용"""
     for item in (
         [ax.title, ax.xaxis.label, ax.yaxis.label]
         + ax.get_xticklabels()
         + ax.get_yticklabels()
     ):
-        item.set_fontproperties(KR_FONT)
+        item.set_fontproperties(font)
 
-#################################################
-# CONFIG
-#################################################
-DATA_PATH = Path("../output/analysis_dataset.json")
-REPORT_DIR = Path("../reports")
-REPORT_DIR.mkdir(parents=True, exist_ok=True)
-CSV_DIR = Path("../temp")
 
-ANALYSIS_JSON       = REPORT_DIR / "analysis_result.json"
-TOKEN_HIST_PNG      = REPORT_DIR / "token_length_distribution.png"
-CHAR_HIST_PNG       = REPORT_DIR / "char_length_distribution.png"
-LABEL_DIST_PNG      = REPORT_DIR / "label_distribution.png"
-QUALITY_REPORT_PNG  = REPORT_DIR / "data_quality_report.png"
-
-# CSV 저장 경로
-DUP_TRAIN_CSV   = CSV_DIR / "duplicate_train.csv"    # Train 내부 중복 행
-DUP_VALID_CSV   = CSV_DIR / "duplicate_valid.csv"    # Valid 내부 중복 행
-DUP_CROSS_CSV   = CSV_DIR / "duplicate_cross.csv"    # Train ↔ Valid 교차 중복 행
-EMPTY_TRAIN_CSV = CSV_DIR / "empty_text_train.csv"   # Train 빈 텍스트 행
-EMPTY_VALID_CSV = CSV_DIR / "empty_text_valid.csv"   # Valid 빈 텍스트 행
-
-TOKENIZER_NAME = "klue/bert-base"
-
-#################################################
-# 1. 데이터 로드
-#################################################
-print("=" * 50)
-print("1. 데이터 로드")
-print("=" * 50)
-
-with open(DATA_PATH, "r", encoding="utf-8") as f:
-    raw_data = json.load(f)
-
-raw_df = pd.DataFrame(raw_data)
-print(f"  로드 완료: {len(raw_df):,}건")
-
-#################################################
-# 2. 전체 데이터 수
-#################################################
-print("\n2. 전체 데이터 수")
-
-raw_train_df = raw_df[raw_df["dataset"] == "train"]
-raw_valid_df = raw_df[raw_df["dataset"] == "valid"]
-num_labels   = raw_df["label"].nunique()
-
-print(f"  전체     : {len(raw_df):,}")
-print(f"  Train    : {len(raw_train_df):,}")
-print(f"  Valid    : {len(raw_valid_df):,}")
-print(f"  라벨 수  : {num_labels}")
-
-#################################################
-# 3. 라벨 별 데이터 수 (중복 제거 전)
-#################################################
-print("\n3. 라벨 별 데이터 수 (중복 제거 전)")
-
-def get_label_distribution(dataframe: pd.DataFrame) -> dict:
+def _get_label_distribution(dataframe: pd.DataFrame) -> dict:
     result = {}
     counts = dataframe["label"].value_counts().sort_index()
     for label, count in counts.items():
@@ -88,120 +46,8 @@ def get_label_distribution(dataframe: pd.DataFrame) -> dict:
         }
     return result
 
-label_dist_train_raw = get_label_distribution(raw_train_df)
-label_dist_valid_raw = get_label_distribution(raw_valid_df)
 
-print("  [Train]")
-for label, info in label_dist_train_raw.items():
-    print(f"    {label}: {info['count']:,}건 ({info['ratio']}%)")
-print("  [Valid]")
-for label, info in label_dist_valid_raw.items():
-    print(f"    {label}: {info['count']:,}건 ({info['ratio']}%)")
-
-# 라벨 분포 시각화 (중복 제거 전)
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-for ax, (split_df, title) in zip(axes, [(raw_train_df, "Train"), (raw_valid_df, "Valid")]):
-    counts = split_df["label"].value_counts().sort_index()
-    bars = ax.bar(counts.index.astype(str), counts.values, color="#4C72B0", edgecolor="white")
-    ax.set_title(f"라벨 분포 — {title}", fontsize=13, fontweight="bold",
-                 fontproperties=KR_FONT)
-    ax.set_xlabel("라벨", fontproperties=KR_FONT)
-    ax.set_ylabel("건수", fontproperties=KR_FONT)
-    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
-    for bar, val in zip(bars, counts.values):
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + max(counts.values) * 0.01,
-                f"{val:,}", ha="center", va="bottom", fontsize=9)
-    _apply_kr_font(ax)
-plt.tight_layout()
-plt.savefig(LABEL_DIST_PNG, dpi=300)
-plt.close()
-print(f"\n  [저장] {LABEL_DIST_PNG}")
-
-#################################################
-# 4. 중복 데이터 수 (라벨 & text)
-#################################################
-print("\n4. 중복 데이터 수 (label & text 기준)")
-
-dup_train_mask = raw_train_df.duplicated(subset=["label", "text"], keep=False)
-dup_valid_mask = raw_valid_df.duplicated(subset=["label", "text"], keep=False)
-
-dup_train = int(raw_train_df.duplicated(subset=["label", "text"]).sum())
-dup_valid = int(raw_valid_df.duplicated(subset=["label", "text"]).sum())
-dup_total = int(raw_df.duplicated(subset=["label", "text"]).sum())
-
-# 교차 중복: Train ↔ Valid 양쪽에 동시 존재하는 (label, text) 쌍
-train_pairs     = set(zip(raw_train_df["label"], raw_train_df["text"]))
-valid_pairs     = set(zip(raw_valid_df["label"], raw_valid_df["text"]))
-cross_dup_pairs = train_pairs & valid_pairs
-dup_cross       = len(cross_dup_pairs)
-
-print(f"  Train 내부 중복         : {dup_train:,}건")
-print(f"  Valid 내부 중복         : {dup_valid:,}건")
-print(f"  Train ↔ Valid 교차 중복  : {dup_cross:,}건")
-print(f"  전체 (합산 검증)         : {dup_train + dup_valid + dup_cross:,}건  ←→  raw 전체 중복: {dup_total:,}건")
-
-# ── CSV 저장: 중복 행 전체 (keep=False → 원본·중복본 모두 포함) ──────────
-dup_train_df = raw_train_df[dup_train_mask].sort_values(["label", "text"])
-dup_valid_df = raw_valid_df[dup_valid_mask].sort_values(["label", "text"])
-
-cross_mask_train = raw_train_df.apply(
-    lambda row: (row["label"], row["text"]) in cross_dup_pairs, axis=1
-)
-cross_mask_valid = raw_valid_df.apply(
-    lambda row: (row["label"], row["text"]) in cross_dup_pairs, axis=1
-)
-dup_cross_df = pd.concat(
-    [raw_train_df[cross_mask_train], raw_valid_df[cross_mask_valid]],
-    ignore_index=True
-).sort_values(["label", "text", "dataset"])
-
-dup_train_df.to_csv(DUP_TRAIN_CSV, index=False, encoding="utf-8-sig")
-dup_valid_df.to_csv(DUP_VALID_CSV, index=False, encoding="utf-8-sig")
-dup_cross_df.to_csv(DUP_CROSS_CSV, index=False, encoding="utf-8-sig")
-print(f"\n  [저장] {DUP_TRAIN_CSV}  ({len(dup_train_df):,}행)")
-print(f"  [저장] {DUP_VALID_CSV}  ({len(dup_valid_df):,}행)")
-print(f"  [저장] {DUP_CROSS_CSV}  ({len(dup_cross_df):,}행)")
-
-#################################################
-# 5. 중복 제거 후 데이터 수
-#################################################
-print("\n5. 중복 제거 후 데이터 수")
-
-# 1단계: 각 split 내부 중복 제거
-df       = raw_df.drop_duplicates(subset=["label", "text"]).reset_index(drop=True)
-train_df = df[df["dataset"] == "train"].copy()
-valid_df = df[df["dataset"] == "valid"].copy()
-
-# 2단계: 교차 중복 제거 (Valid 우선 보존 → Train에서 제거)
-cross_mask = train_df.set_index(["label", "text"]).index.isin(
-    valid_df.set_index(["label", "text"]).index
-)
-train_df = train_df[~cross_mask].reset_index(drop=True)
-
-print(f"  전체  : {len(train_df) + len(valid_df):,}건")
-print(f"  Train : {len(train_df):,}건  (교차 중복 {dup_cross:,}건 추가 제거)")
-print(f"  Valid : {len(valid_df):,}건")
-
-# 중복 제거 후 라벨 분포
-label_dist_train = get_label_distribution(train_df)
-label_dist_valid = get_label_distribution(valid_df)
-
-print("\n  [중복 제거 후 라벨 분포 — Train]")
-for label, info in label_dist_train.items():
-    print(f"    {label}: {info['count']:,}건 ({info['ratio']}%)")
-print("  [중복 제거 후 라벨 분포 — Valid]")
-for label, info in label_dist_valid.items():
-    print(f"    {label}: {info['count']:,}건 ({info['ratio']}%)")
-
-#################################################
-# 6. 문장 길이 (char)
-#################################################
-print("\n6. 문장 길이 (Character 기준)")
-
-train_df["char_len"] = train_df["text"].astype(str).apply(len)
-valid_df["char_len"] = valid_df["text"].astype(str).apply(len)
-
-def get_length_stats(series: pd.Series) -> dict:
+def _get_length_stats(series: pd.Series) -> dict:
     return {
         "mean"  : round(float(series.mean()), 2),
         "median": round(float(series.median()), 2),
@@ -213,218 +59,507 @@ def get_length_stats(series: pd.Series) -> dict:
         "p99"   : round(float(series.quantile(0.99)), 2),
     }
 
-char_stats_train = get_length_stats(train_df["char_len"])
-char_stats_valid = get_length_stats(valid_df["char_len"])
-
-for split, stats in [("Train", char_stats_train), ("Valid", char_stats_valid)]:
-    print(f"  [{split}] mean={stats['mean']}, median={stats['median']}, "
-          f"std={stats['std']}, min={stats['min']}, max={stats['max']}, "
-          f"p90={stats['p90']}, p95={stats['p95']}, p99={stats['p99']}")
-
-# 문장 길이 히스토그램
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-for ax, (split_df, label) in zip(axes, [(train_df, "Train"), (valid_df, "Valid")]):
-    ax.hist(split_df["char_len"], bins=50, color="#55A868", edgecolor="white")
-    ax.set_title(f"문장 길이 분포 (char) — {label}", fontsize=13, fontweight="bold",
-                 fontproperties=KR_FONT)
-    ax.set_xlabel("문자 수", fontproperties=KR_FONT)
-    ax.set_ylabel("건수", fontproperties=KR_FONT)
-    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
-    stats = get_length_stats(split_df["char_len"])
-    textstr = (f"mean={stats['mean']}\nmedian={stats['median']}\n"
-               f"p95={stats['p95']}\nmax={stats['max']}")
-    ax.text(0.97, 0.97, textstr, transform=ax.transAxes, fontsize=8,
-            verticalalignment="top", horizontalalignment="right",
-            bbox=dict(boxstyle="round", facecolor="white", alpha=0.6),
-            fontproperties=KR_FONT)
-    _apply_kr_font(ax)
-plt.tight_layout()
-plt.savefig(CHAR_HIST_PNG, dpi=300)
-plt.close()
-print(f"  [저장] {CHAR_HIST_PNG}")
 
 #################################################
-# 7. 토크나이징 후 토큰 수
+# 단계별 함수
 #################################################
-print("\n7. 토크나이징 후 토큰 수")
 
-tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME)
+def step1_load_and_clean(data_path: Path, report_dir: Path, csv_dir: Path = CSV_DIR) -> tuple[pd.DataFrame, dict]:
+    """
+    1. 데이터 로드
+       1-1. 결측치 & 빈 텍스트 확인
+       1-2. 텍스트 정제 (None→"" / strip / 빈 텍스트 제거)
 
-def get_token_length(text: str) -> int:
-    return len(tokenizer.encode(str(text), add_special_tokens=False))
+    Returns
+    -------
+    df : 정제된 전체 DataFrame
+    cleaning_info : 정제 통계 dict
+    """
+    print("=" * 50)
+    print("1. 데이터 로드 및 텍스트 정제")
+    print("=" * 50)
 
-train_df["token_len"] = train_df["text"].astype(str).apply(get_token_length)
-valid_df["token_len"] = valid_df["text"].astype(str).apply(get_token_length)
+    with open(data_path, "r", encoding="utf-8") as f:
+        raw_data = json.load(f)
 
-token_stats_train = get_length_stats(train_df["token_len"])
-token_stats_valid = get_length_stats(valid_df["token_len"])
+    df = pd.DataFrame(raw_data)
+    print(f"  로드 완료: {len(df):,}건")
 
-for split, stats in [("Train", token_stats_train), ("Valid", token_stats_valid)]:
-    print(f"  [{split}] mean={stats['mean']}, median={stats['median']}, "
-          f"std={stats['std']}, min={stats['min']}, max={stats['max']}, "
-          f"p90={stats['p90']}, p95={stats['p95']}, p99={stats['p99']}")
+    # 1-1. 결측치 & 빈 텍스트 확인 (정제 전)
+    print("\n  [1-1. 데이터 확인]")
+    print(f"  shape    : {df.shape}")
+    print(f"  columns  : {list(df.columns)}")
+    null_counts = df.isnull().sum()
+    print(f"  결측치 현황:\n{null_counts.to_string()}")
+    empty_before = int((df["text"].astype(str).str.strip() == "").sum())
+    print(f"  빈 텍스트 (strip 후 == \"\"): {empty_before:,}건")
 
-# 토큰 길이 히스토그램
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-for ax, (split_df, label) in zip(axes, [(train_df, "Train"), (valid_df, "Valid")]):
-    ax.hist(split_df["token_len"], bins=50, color="#C44E52", edgecolor="white")
-    ax.set_title(f"토큰 수 분포 — {label}", fontsize=13, fontweight="bold",
-                 fontproperties=KR_FONT)
-    ax.set_xlabel("토큰 수", fontproperties=KR_FONT)
-    ax.set_ylabel("건수", fontproperties=KR_FONT)
-    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
-    stats = get_length_stats(split_df["token_len"])
-    textstr = (f"mean={stats['mean']}\nmedian={stats['median']}\n"
-               f"p95={stats['p95']}\nmax={stats['max']}")
-    ax.text(0.97, 0.97, textstr, transform=ax.transAxes, fontsize=8,
-            verticalalignment="top", horizontalalignment="right",
-            bbox=dict(boxstyle="round", facecolor="white", alpha=0.6),
-            fontproperties=KR_FONT)
-    _apply_kr_font(ax)
-plt.tight_layout()
-plt.savefig(TOKEN_HIST_PNG, dpi=300)
-plt.close()
-print(f"  [저장] {TOKEN_HIST_PNG}")
+    # 1-2. 텍스트 정제
+    print("\n  [1-2. 텍스트 정제]")
+    none_count  = int(df["text"].isnull().sum())
+    df["text"]  = df["text"].fillna("")          # ① None → ""
+    df["text"]  = df["text"].astype(str).str.strip()  # ② 앞뒤 공백 제거
 
-#################################################
-# 8. Vocab 정보
-#################################################
-print("\n8. Vocab 정보")
-print(f"  Tokenizer   : {TOKENIZER_NAME}")
-print(f"  Class       : {tokenizer.__class__.__name__}")
-print(f"  Vocab Size  : {tokenizer.vocab_size:,}")
+    empty_mask  = df["text"] == ""               # ③ 빈 텍스트 탐지
+    empty_count = int(empty_mask.sum())
+    removed_csv = csv_dir / "empty_text_removed.csv"
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    df[empty_mask].to_csv(removed_csv, index=False, encoding="utf-8-sig")
+    df = df[~empty_mask].reset_index(drop=True)  # ③ 제거
 
-vocab_info = {
-    "name"      : TOKENIZER_NAME,
-    "class"     : tokenizer.__class__.__name__,
-    "vocab_size": tokenizer.vocab_size,
-}
+    print(f"  ① None → \"\"       : {none_count:,}건 처리")
+    print(f"  ② 앞뒤 공백 제거   : 전체 적용")
+    print(f"  ③ 빈 텍스트 제거   : {empty_count:,}건 → {len(df):,}건 남음")
+    print(f"     [저장] {removed_csv}")
 
-#################################################
-# 9. 데이터 품질 점검
-#################################################
-print("\n9. 데이터 품질 점검")
+    cleaning_info = {
+        "before_total"  : len(df) + empty_count,
+        "none_count"    : none_count,
+        "empty_removed" : empty_count,
+        "after_total"   : len(df),
+        "removed_csv"   : str(removed_csv),
+    }
+    return df, cleaning_info
 
-# 빈 텍스트
-empty_train_mask = train_df["text"].astype(str).str.strip() == ""
-empty_valid_mask = valid_df["text"].astype(str).str.strip() == ""
-empty_train = int(empty_train_mask.sum())
-empty_valid = int(empty_valid_mask.sum())
 
-# 빈 텍스트 행 CSV 저장
-empty_train_df = train_df[empty_train_mask].copy()
-empty_valid_df = valid_df[empty_valid_mask].copy()
-empty_train_df.to_csv(EMPTY_TRAIN_CSV, index=False, encoding="utf-8-sig")
-empty_valid_df.to_csv(EMPTY_VALID_CSV, index=False, encoding="utf-8-sig")
-print(f"  [빈 텍스트] Train: {empty_train:,}건  →  {EMPTY_TRAIN_CSV}")
-print(f"  [빈 텍스트] Valid: {empty_valid:,}건  →  {EMPTY_VALID_CSV}")
+def step2_count(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """
+    2. 전체 데이터 수 (정제 후 기준)
 
-# 매우 짧은 텍스트 (char 기준 5자 이하)
-SHORT_THRESHOLD = 5
-short_train = int((train_df["char_len"] <= SHORT_THRESHOLD).sum())
-short_valid = int((valid_df["char_len"] <= SHORT_THRESHOLD).sum())
+    Returns
+    -------
+    train_raw, valid_raw : split별 정제 후 DataFrame (중복 제거 전)
+    count_info : 건수 통계 dict
+    """
+    print("\n2. 전체 데이터 수 (텍스트 정제 후)")
 
-# 매우 긴 텍스트 (token 기준 512 초과 → BERT 최대 길이)
-LONG_THRESHOLD = 512
-long_train = int((train_df["token_len"] > LONG_THRESHOLD).sum())
-long_valid = int((valid_df["token_len"] > LONG_THRESHOLD).sum())
+    train_raw  = df[df["dataset"] == "train"].copy()
+    valid_raw  = df[df["dataset"] == "valid"].copy()
+    num_labels = df["label"].nunique()
 
-# 결측값
-null_train = int(train_df["text"].isnull().sum())
-null_valid = int(valid_df["text"].isnull().sum())
+    print(f"  전체    : {len(df):,}")
+    print(f"  Train   : {len(train_raw):,}")
+    print(f"  Valid   : {len(valid_raw):,}")
+    print(f"  라벨 수 : {num_labels}")
 
-print(f"  [짧은 텍스트 ≤{SHORT_THRESHOLD}] Train: {short_train:,}, Valid: {short_valid:,}")
-print(f"  [긴 텍스트  >{LONG_THRESHOLD}]  Train: {long_train:,}, Valid: {long_valid:,}")
-print(f"  [결측값]          Train: {null_train:,}, Valid: {null_valid:,}")
-
-# 품질 점검 시각화
-categories   = ["빈 텍스트", f"짧은 텍스트\n(≤{SHORT_THRESHOLD}자)", f"긴 텍스트\n(>{LONG_THRESHOLD} tokens)", "결측값"]
-train_values = [empty_train, short_train, long_train, null_train]
-valid_values = [empty_valid, short_valid, long_valid, null_valid]
-
-x = range(len(categories))
-w = 0.35
-fig, ax = plt.subplots(figsize=(10, 5))
-b1 = ax.bar([i - w / 2 for i in x], train_values, width=w, label="Train", color="#4C72B0")
-b2 = ax.bar([i + w / 2 for i in x], valid_values, width=w, label="Valid",  color="#DD8452")
-ax.set_title("데이터 품질 점검", fontsize=13, fontweight="bold",
-             fontproperties=KR_FONT)
-ax.set_xticks(list(x))
-ax.set_xticklabels(categories, fontproperties=KR_FONT)
-ax.set_ylabel("건수", fontproperties=KR_FONT)
-ax.legend(prop=KR_FONT)
-ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{int(v):,}"))
-_apply_kr_font(ax)
-for bar in list(b1) + list(b2):
-    h = bar.get_height()
-    ax.text(bar.get_x() + bar.get_width() / 2, h + 0.3, f"{int(h):,}",
-            ha="center", va="bottom", fontsize=8)
-plt.tight_layout()
-plt.savefig(QUALITY_REPORT_PNG, dpi=300)
-plt.close()
-print(f"  [저장] {QUALITY_REPORT_PNG}")
-
-quality_info = {
-    "empty_text" : {"train": empty_train, "valid": empty_valid},
-    "short_text" : {"threshold": SHORT_THRESHOLD, "train": short_train, "valid": short_valid},
-    "long_text"  : {"threshold": LONG_THRESHOLD,  "train": long_train,  "valid": long_valid},
-    "null_text"  : {"train": null_train, "valid": null_valid},
-}
-
-#################################################
-# SAVE analysis_result.json
-#################################################
-result = {
-    "dataset_count": {
-        "raw": {
-            "total"     : len(raw_df),
-            "train"     : len(raw_train_df),
-            "valid"     : len(raw_valid_df),
-        },
+    count_info = {
+        "total"     : len(df),
+        "train"     : len(train_raw),
+        "valid"     : len(valid_raw),
         "num_labels": num_labels,
-        "after_dedup": {
+    }
+    return train_raw, valid_raw, count_info
+
+
+def step3_duplicate(
+    train_raw: pd.DataFrame,
+    valid_raw: pd.DataFrame,
+    csv_dir: Path = CSV_DIR,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """
+    3. 중복 데이터 수 집계 + CSV 저장
+    4. 중복 제거 후 데이터 수
+
+    Returns
+    -------
+    train_df, valid_df : 중복 제거된 DataFrame
+    dup_info : 중복 통계 dict
+    """
+    print("\n3. 중복 데이터 수 (label & text 기준)")
+
+    dup_train_mask = train_raw.duplicated(subset=["label", "text"], keep=False)
+    dup_valid_mask = valid_raw.duplicated(subset=["label", "text"], keep=False)
+
+    dup_train = int(train_raw.duplicated(subset=["label", "text"]).sum())
+    dup_valid = int(valid_raw.duplicated(subset=["label", "text"]).sum())
+    dup_total = int(
+        pd.concat([train_raw, valid_raw]).duplicated(subset=["label", "text"]).sum()
+    )
+
+    train_pairs     = set(zip(train_raw["label"], train_raw["text"]))
+    valid_pairs     = set(zip(valid_raw["label"], valid_raw["text"]))
+    cross_dup_pairs = train_pairs & valid_pairs
+    dup_cross       = len(cross_dup_pairs)
+
+    print(f"  Train 내부 중복         : {dup_train:,}건")
+    print(f"  Valid 내부 중복         : {dup_valid:,}건")
+    print(f"  Train ↔ Valid 교차 중복  : {dup_cross:,}건")
+    print(f"  전체 합산 검증           : {dup_train + dup_valid + dup_cross:,}건  ←→  {dup_total:,}건")
+
+    # CSV 저장
+    dup_train_df = train_raw[dup_train_mask].sort_values(["label", "text"])
+    dup_valid_df = valid_raw[dup_valid_mask].sort_values(["label", "text"])
+
+    cross_mask_tr = train_raw.apply(
+        lambda r: (r["label"], r["text"]) in cross_dup_pairs, axis=1
+    )
+    cross_mask_vl = valid_raw.apply(
+        lambda r: (r["label"], r["text"]) in cross_dup_pairs, axis=1
+    )
+    dup_cross_df = pd.concat(
+        [train_raw[cross_mask_tr], valid_raw[cross_mask_vl]], ignore_index=True
+    ).sort_values(["label", "text", "dataset"])
+
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    dup_train_csv = csv_dir / "duplicate_train.csv"
+    dup_valid_csv = csv_dir / "duplicate_valid.csv"
+    dup_cross_csv = csv_dir / "duplicate_cross.csv"
+    dup_train_df.to_csv(dup_train_csv, index=False, encoding="utf-8-sig")
+    dup_valid_df.to_csv(dup_valid_csv, index=False, encoding="utf-8-sig")
+    dup_cross_df.to_csv(dup_cross_csv, index=False, encoding="utf-8-sig")
+    print(f"\n  [저장] {dup_train_csv}  ({len(dup_train_df):,}행)")
+    print(f"  [저장] {dup_valid_csv}  ({len(dup_valid_df):,}행)")
+    print(f"  [저장] {dup_cross_csv}  ({len(dup_cross_df):,}행)")
+
+    # 중복 제거
+    print("\n4. 중복 제거 후 데이터 수")
+    combined  = pd.concat([train_raw, valid_raw])
+    combined  = combined.drop_duplicates(subset=["label", "text"]).reset_index(drop=True)
+    train_df  = combined[combined["dataset"] == "train"].copy().reset_index(drop=True)
+    valid_df  = combined[combined["dataset"] == "valid"].copy().reset_index(drop=True)
+
+    cross_mask = train_df.set_index(["label", "text"]).index.isin(
+        valid_df.set_index(["label", "text"]).index
+    )
+    train_df = train_df[~cross_mask].reset_index(drop=True)
+
+    print(f"  Train : {len(train_df):,}건  (교차 중복 {dup_cross:,}건 추가 제거)")
+    print(f"  Valid : {len(valid_df):,}건")
+    print(f"  전체  : {len(train_df) + len(valid_df):,}건")
+
+    dup_info = {
+        "total"        : dup_total,
+        "train"        : dup_train,
+        "valid"        : dup_valid,
+        "cross"        : dup_cross,
+        "after_dedup"  : {
             "total": len(train_df) + len(valid_df),
             "train": len(train_df),
             "valid": len(valid_df),
         },
-    },
-    "label_distribution": {
-        "before_dedup": {
-            "train": label_dist_train_raw,
-            "valid": label_dist_valid_raw,
+        "saved_csv": {
+            "duplicate_train": str(dup_train_csv),
+            "duplicate_valid": str(dup_valid_csv),
+            "duplicate_cross": str(dup_cross_csv),
         },
-        "after_dedup": {
-            "train": label_dist_train,
-            "valid": label_dist_valid,
+    }
+    return train_df, valid_df, dup_info
+
+
+def step5_label_distribution(
+    train_raw: pd.DataFrame,
+    valid_raw: pd.DataFrame,
+    train_df: pd.DataFrame,
+    valid_df: pd.DataFrame,
+    report_dir: Path,
+    font: fm.FontProperties,
+) -> dict:
+    """
+    5. 라벨 별 데이터 수 (중복 제거 전 → 후 비교)
+       그래프: label_distribution.png
+    """
+    print("\n5. 라벨 별 데이터 수")
+
+    label_before_train = _get_label_distribution(train_raw)
+    label_before_valid = _get_label_distribution(valid_raw)
+    label_after_train  = _get_label_distribution(train_df)
+    label_after_valid  = _get_label_distribution(valid_df)
+
+    for split, before, after in [
+        ("Train", label_before_train, label_after_train),
+        ("Valid", label_before_valid, label_after_valid),
+    ]:
+        print(f"  [{split}]")
+        for label in sorted(set(before) | set(after)):
+            b = before.get(label, {"count": 0, "ratio": 0.0})
+            a = after.get(label,  {"count": 0, "ratio": 0.0})
+            print(f"    {label}: {b['count']:,} → {a['count']:,}건 ({a['ratio']}%)")
+
+    # 시각화 (중복 제거 후 기준)
+    label_dist_png = report_dir / "label_distribution.png"
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    for ax, (split_df, title) in zip(axes, [(train_df, "Train"), (valid_df, "Valid")]):
+        counts = split_df["label"].value_counts().sort_index()
+        bars   = ax.bar(counts.index.astype(str), counts.values,
+                        color="#4C72B0", edgecolor="white")
+        ax.set_title(f"라벨 분포 — {title}", fontsize=13, fontweight="bold",
+                     fontproperties=font)
+        ax.set_xlabel("라벨", fontproperties=font)
+        ax.set_ylabel("건수", fontproperties=font)
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
+        for bar, val in zip(bars, counts.values):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + max(counts.values) * 0.01,
+                f"{val:,}", ha="center", va="bottom", fontsize=9,
+            )
+        _apply_kr_font(ax, font)
+    plt.tight_layout()
+    plt.savefig(label_dist_png, dpi=300)
+    plt.close()
+    print(f"\n  [저장] {label_dist_png}")
+
+    return {
+        "before_dedup": {"train": label_before_train, "valid": label_before_valid},
+        "after_dedup" : {"train": label_after_train,  "valid": label_after_valid},
+    }
+
+
+def step6_char_length(
+    train_df: pd.DataFrame,
+    valid_df: pd.DataFrame,
+    report_dir: Path,
+    font: fm.FontProperties,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """
+    6. 문장 길이 분석 (char 기준)
+       그래프: char_length_distribution.png
+
+    Returns DataFrame에 char_len 컬럼 추가
+    """
+    print("\n6. 문장 길이 (Character 기준)")
+
+    train_df = train_df.copy()
+    valid_df = valid_df.copy()
+    train_df["char_len"] = train_df["text"].astype(str).apply(len)
+    valid_df["char_len"] = valid_df["text"].astype(str).apply(len)
+
+    char_stats_train = _get_length_stats(train_df["char_len"])
+    char_stats_valid = _get_length_stats(valid_df["char_len"])
+
+    for split, stats in [("Train", char_stats_train), ("Valid", char_stats_valid)]:
+        print(f"  [{split}] mean={stats['mean']} median={stats['median']} "
+              f"std={stats['std']} min={stats['min']} max={stats['max']} "
+              f"p90={stats['p90']} p95={stats['p95']} p99={stats['p99']}")
+
+    char_hist_png = report_dir / "char_length_distribution.png"
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    for ax, (split_df, label) in zip(axes, [(train_df, "Train"), (valid_df, "Valid")]):
+        ax.hist(split_df["char_len"], bins=50, color="#55A868", edgecolor="white")
+        ax.set_title(f"문장 길이 분포 (char) — {label}", fontsize=13,
+                     fontweight="bold", fontproperties=font)
+        ax.set_xlabel("문자 수", fontproperties=font)
+        ax.set_ylabel("건수", fontproperties=font)
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
+        s = _get_length_stats(split_df["char_len"])
+        textstr = f"mean={s['mean']}\nmedian={s['median']}\np95={s['p95']}\nmax={s['max']}"
+        ax.text(0.97, 0.97, textstr, transform=ax.transAxes, fontsize=8,
+                va="top", ha="right",
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.6),
+                fontproperties=font)
+        _apply_kr_font(ax, font)
+    plt.tight_layout()
+    plt.savefig(char_hist_png, dpi=300)
+    plt.close()
+    print(f"  [저장] {char_hist_png}")
+
+    return train_df, valid_df, {"train": char_stats_train, "valid": char_stats_valid}
+
+
+def step7_token_length(
+    train_df: pd.DataFrame,
+    valid_df: pd.DataFrame,
+    tokenizer_name: str,
+    report_dir: Path,
+    font: fm.FontProperties,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict, object]:
+    """
+    7. 토크나이징 후 토큰 수 분석
+       p95 / p99 초과 건수 포함
+       그래프: token_length_distribution.png
+
+    Returns DataFrame에 token_len 컬럼 추가
+    """
+    print("\n7. 토크나이징 후 토큰 수")
+
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+
+    def _token_len(text: str) -> int:
+        return len(tokenizer.encode(str(text), add_special_tokens=False))
+
+    train_df = train_df.copy()
+    valid_df = valid_df.copy()
+    train_df["token_len"] = train_df["text"].astype(str).apply(_token_len)
+    valid_df["token_len"] = valid_df["text"].astype(str).apply(_token_len)
+
+    tok_stats_train = _get_length_stats(train_df["token_len"])
+    tok_stats_valid = _get_length_stats(valid_df["token_len"])
+
+    # p95 / p99 초과 건수
+    def _over_counts(df: pd.DataFrame, stats: dict) -> dict:
+        return {
+            "over_p95": int((df["token_len"] > stats["p95"]).sum()),
+            "over_p99": int((df["token_len"] > stats["p99"]).sum()),
+        }
+
+    over_train = _over_counts(train_df, tok_stats_train)
+    over_valid = _over_counts(valid_df, tok_stats_valid)
+    tok_stats_train.update(over_train)
+    tok_stats_valid.update(over_valid)
+
+    for split, stats in [("Train", tok_stats_train), ("Valid", tok_stats_valid)]:
+        print(f"  [{split}] mean={stats['mean']} median={stats['median']} "
+              f"std={stats['std']} min={stats['min']} max={stats['max']}")
+        print(f"           p90={stats['p90']} p95={stats['p95']} (초과 {stats['over_p95']:,}건) "
+              f"p99={stats['p99']} (초과 {stats['over_p99']:,}건)")
+
+    token_hist_png = report_dir / "token_length_distribution.png"
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    for ax, (split_df, label, stats) in zip(
+        axes,
+        [(train_df, "Train", tok_stats_train), (valid_df, "Valid", tok_stats_valid)],
+    ):
+        ax.hist(split_df["token_len"], bins=50, color="#C44E52", edgecolor="white")
+        # p95 / p99 수직선
+        ax.axvline(stats["p95"], color="#E67E22", linestyle="--", linewidth=1.2,
+                   label=f"p95={stats['p95']} ({stats['over_p95']:,}건 초과)")
+        ax.axvline(stats["p99"], color="#8E44AD", linestyle="--", linewidth=1.2,
+                   label=f"p99={stats['p99']} ({stats['over_p99']:,}건 초과)")
+        ax.set_title(f"토큰 수 분포 — {label}", fontsize=13,
+                     fontweight="bold", fontproperties=font)
+        ax.set_xlabel("토큰 수", fontproperties=font)
+        ax.set_ylabel("건수", fontproperties=font)
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
+        textstr = (f"mean={stats['mean']}\nmedian={stats['median']}\n"
+                   f"p95={stats['p95']}\nmax={stats['max']}")
+        ax.text(0.97, 0.97, textstr, transform=ax.transAxes, fontsize=8,
+                va="top", ha="right",
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.6),
+                fontproperties=font)
+        ax.legend(prop=font, fontsize=8)
+        _apply_kr_font(ax, font)
+    plt.tight_layout()
+    plt.savefig(token_hist_png, dpi=300)
+    plt.close()
+    print(f"  [저장] {token_hist_png}")
+
+    return train_df, valid_df, {"train": tok_stats_train, "valid": tok_stats_valid}, tokenizer
+
+
+def step8_vocab(tokenizer, tokenizer_name: str) -> dict:
+    """8. Vocab 정보"""
+    print("\n8. Vocab 정보")
+    vocab_info = {
+        "name"      : tokenizer_name,
+        "class"     : tokenizer.__class__.__name__,
+        "vocab_size": tokenizer.vocab_size,
+    }
+    print(f"  Tokenizer  : {vocab_info['name']}")
+    print(f"  Class      : {vocab_info['class']}")
+    print(f"  Vocab Size : {vocab_info['vocab_size']:,}")
+    return vocab_info
+
+
+
+
+def save_results(
+    report_dir: Path,
+    csv_dir: Path,
+    cleaning_info: dict,
+    count_info: dict,
+    dup_info: dict,
+    label_dist: dict,
+    char_stats: dict,
+    tok_stats: dict,
+    vocab_info: dict,
+    train_df: pd.DataFrame,
+    valid_df: pd.DataFrame,
+) -> dict:
+    """분석 결과를 JSON으로 저장하고 최종 학습용 CSV를 저장"""
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    clean_train_csv = csv_dir / "clean_train.csv"
+    clean_valid_csv = csv_dir / "clean_valid.csv"
+    train_df.to_csv(clean_train_csv, index=False, encoding="utf-8-sig")
+    valid_df.to_csv(clean_valid_csv, index=False, encoding="utf-8-sig")
+    print(f"\n[최종 데이터셋 저장]")
+    print(f"  Train : {clean_train_csv}  ({len(train_df):,}건)")
+    print(f"  Valid : {clean_valid_csv}  ({len(valid_df):,}건)")
+
+    result = {
+        "dataset_count": {
+            "raw"          : count_info,
+            "text_cleaning": cleaning_info,
+            "after_dedup"  : dup_info["after_dedup"],
+            "final"        : {
+                "total": len(train_df) + len(valid_df),
+                "train": len(train_df),
+                "valid": len(valid_df),
+            },
         },
-    },
-    "duplicate": {
-        "total" : dup_total,
-        "train" : dup_train,
-        "valid" : dup_valid,
-        "cross" : dup_cross,
-    },
-    "char_length": {
-        "train": char_stats_train,
-        "valid": char_stats_valid,
-    },
-    "token_length": {
-        "train": token_stats_train,
-        "valid": token_stats_valid,
-    },
-    "tokenizer"   : vocab_info,
-    "data_quality": quality_info,
-    "saved_csv": {
-        "duplicate_train" : str(DUP_TRAIN_CSV),
-        "duplicate_valid" : str(DUP_VALID_CSV),
-        "duplicate_cross" : str(DUP_CROSS_CSV),
-        "empty_text_train": str(EMPTY_TRAIN_CSV),
-        "empty_text_valid": str(EMPTY_VALID_CSV),
-    },
-}
+        "duplicate"       : dup_info,
+        "label_distribution": label_dist,
+        "char_length"     : char_stats,
+        "token_length"    : tok_stats,
+        "tokenizer"       : vocab_info,
+        "saved_csv": {
+            **dup_info.get("saved_csv", {}),
+            "empty_text_removed": str(cleaning_info.get("removed_csv", "")),
+            "clean_train"       : str(clean_train_csv),
+            "clean_valid"       : str(clean_valid_csv),
+        },
+    }
 
-with open(ANALYSIS_JSON, "w", encoding="utf-8") as f:
-    json.dump(result, f, ensure_ascii=False, indent=4)
+    analysis_json = report_dir / "analysis_result.json"
+    with open(analysis_json, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+    print(f"  결과 JSON : {analysis_json}")
+    return result
 
-print("\n분석 완료")
-print(f"결과 저장: {ANALYSIS_JSON}")
+
+#################################################
+# 메인 실행 함수 (외부 import 진입점)
+#################################################
+
+def run_analysis(
+    data_path: Path  = DATA_PATH,
+    report_dir: Path = REPORT_DIR,
+    csv_dir: Path    = CSV_DIR,
+    tokenizer_name: str = TOKENIZER_NAME,
+) -> dict:
+    """
+    전체 분석 파이프라인 실행
+
+    Parameters
+    ----------
+    data_path       : 입력 JSON 파일 경로
+    report_dir      : 보고서 및 PNG 저장 디렉토리
+    csv_dir         : CSV 파일 저장 디렉토리
+    tokenizer_name  : HuggingFace 토크나이저 이름
+
+    Returns
+    -------
+    result : analysis_result.json 내용과 동일한 dict
+    """
+    report_dir.mkdir(parents=True, exist_ok=True)
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    font = _get_kr_font()
+
+    # 순서: 1 → 2 → 3(중복) → 4(중복제거) → 5(라벨) → 6(char) → 7(token) → 8(vocab)
+    df, cleaning_info                         = step1_load_and_clean(data_path, report_dir, csv_dir)
+    train_raw, valid_raw, count_info          = step2_count(df)
+    train_df, valid_df, dup_info              = step3_duplicate(train_raw, valid_raw, csv_dir)
+    label_dist                                = step5_label_distribution(
+                                                    train_raw, valid_raw,
+                                                    train_df, valid_df,
+                                                    report_dir, font)
+    train_df, valid_df, char_stats            = step6_char_length(train_df, valid_df, report_dir, font)
+    train_df, valid_df, tok_stats, tokenizer  = step7_token_length(
+                                                    train_df, valid_df,
+                                                    tokenizer_name, report_dir, font)
+    vocab_info                                = step8_vocab(tokenizer, tokenizer_name)
+    result = save_results(
+        report_dir, csv_dir, cleaning_info, count_info, dup_info,
+        label_dist, char_stats, tok_stats, vocab_info,
+        train_df, valid_df,
+    )
+    print("\n" + "=" * 50)
+    print("분석 완료")
+    print("=" * 50)
+    return result
+
+
+#################################################
+# 직접 실행
+#################################################
+if __name__ == "__main__":
+    run_analysis()
