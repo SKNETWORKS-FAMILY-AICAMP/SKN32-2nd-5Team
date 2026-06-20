@@ -1,0 +1,143 @@
+{
+    "dataset_count": {
+        "raw": {
+            "total": 98177,
+            "train": 87265,
+            "valid": 10912
+        },
+        "num_labels": 2,
+        "after_dedup": {
+            "total": 62822,
+            "train": 57301,
+            "valid": 5521
+        }
+    },
+    "label_distribution": {
+        "before_dedup": {
+            "train": {
+                "churn_signal": {
+                    "count": 7025,
+                    "ratio": 8.05
+                },
+                "retain": {
+                    "count": 80240,
+                    "ratio": 91.95
+                }
+            },
+            "valid": {
+                "churn_signal": {
+                    "count": 970,
+                    "ratio": 8.89
+                },
+                "retain": {
+                    "count": 9942,
+                    "ratio": 91.11
+                }
+            }
+        },
+        "after_dedup": {
+            "train": {
+                "churn_signal": {
+                    "count": 5497,
+                    "ratio": 9.59
+                },
+                "retain": {
+                    "count": 51804,
+                    "ratio": 90.41
+                }
+            },
+            "valid": {
+                "churn_signal": {
+                    "count": 587,
+                    "ratio": 10.63
+                },
+                "retain": {
+                    "count": 4934,
+                    "ratio": 89.37
+                }
+            }
+        }
+    },
+    "duplicate": {
+        "total": 35355,
+        "train": 29964,
+        "valid": 2214,
+        "cross": 3177
+    },
+    "char_length": {
+        "train": {
+            "mean": 24.74,
+            "median": 21.0,
+            "std": 15.49,
+            "min": 0,
+            "max": 356,
+            "p90": 44.0,
+            "p95": 54.0,
+            "p99": 80.0
+        },
+        "valid": {
+            "mean": 24.98,
+            "median": 20.0,
+            "std": 16.24,
+            "min": 3,
+            "max": 243,
+            "p90": 45.0,
+            "p95": 56.0,
+            "p99": 83.0
+        }
+    },
+    "token_length": {
+        "train": {
+            "mean": 13.93,
+            "median": 12.0,
+            "std": 8.27,
+            "min": 0,
+            "max": 176,
+            "p90": 24.0,
+            "p95": 29.0,
+            "p99": 43.0
+        },
+        "valid": {
+            "mean": 13.97,
+            "median": 12.0,
+            "std": 8.71,
+            "min": 1,
+            "max": 130,
+            "p90": 25.0,
+            "p95": 31.0,
+            "p99": 45.0
+        }
+    },
+    "tokenizer": {
+        "name": "klue/bert-base",
+        "class": "BertTokenizer",
+        "vocab_size": 32000
+    },
+    "data_quality": {
+        "empty_text": {
+            "train": 2,
+            "valid": 0
+        },
+        "short_text": {
+            "threshold": 5,
+            "train": 518,
+            "valid": 48
+        },
+        "long_text": {
+            "threshold": 512,
+            "train": 0,
+            "valid": 0
+        },
+        "null_text": {
+            "train": 0,
+            "valid": 0
+        }
+    },
+    "saved_csv": {
+        "duplicate_train": "../temp/duplicate_train.csv",
+        "duplicate_valid": "../temp/duplicate_valid.csv",
+        "duplicate_cross": "../temp/duplicate_cross.csv",
+        "empty_text_train": "../temp/empty_text_train.csv",
+        "empty_text_valid": "../temp/empty_text_valid.csv"
+    }
+}
