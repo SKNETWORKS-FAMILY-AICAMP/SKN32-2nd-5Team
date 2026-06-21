@@ -257,14 +257,16 @@ def train_epoch(
 def validate(
     model,
     loader: DataLoader,
+    criterion,
     device: str,
-) -> tuple[float, str, dict, float]:
+    loss_type: str = "focal",
+) -> tuple[float, float, str, dict, float]:
     """
     검증 루프.
 
     Returns
     -------
-    (f1_weighted, classification_report_str, report_dict, elapsed_seconds)
+    (val_loss, f1_weighted, classification_report_str, report_dict, elapsed_seconds)
 
     report_dict 구조 예시:
         {
@@ -275,6 +277,7 @@ def validate(
     """
     model.eval()
     preds, targets = [], []
+    total_loss     = 0.0
     t0             = time.time()
 
     with torch.no_grad():
@@ -284,10 +287,18 @@ def validate(
             labels         = batch["label"].to(device)
 
             logits = model(input_ids, attention_mask)
+
+            if loss_type == "bce":
+                loss = criterion(logits[:, 1].float(), labels.float())
+            else:
+                loss = criterion(logits, labels)
+
+            total_loss += loss.item()
             preds.extend(logits.argmax(dim=1).cpu().numpy())
             targets.extend(labels.cpu().numpy())
 
     elapsed     = time.time() - t0
+    val_loss    = total_loss / len(loader)
     f1          = f1_score(targets, preds, average="weighted")
     report_str  = classification_report(
         targets, preds,
@@ -299,7 +310,7 @@ def validate(
         target_names=[ID2LABEL[i] for i in range(NUM_CLASSES)],
         output_dict=True,
     )
-    return f1, report_str, report_dict, elapsed
+    return val_loss, f1, report_str, report_dict, elapsed
 
 
 #################################################
@@ -390,7 +401,8 @@ def save_best_model(model, model_name: str) -> None:
 def make_record(
     report_dict: dict,
     epoch,                    # int 또는 "test"
-    loss: float | None,
+    train_loss: float | None,
+    valid_loss: float | None,
     f1: float,
     train_time: float | None,
     valid_time: float,
@@ -401,7 +413,7 @@ def make_record(
 
     저장 컬럼
     ---------
-    epoch, loss, f1_weighted, train_time, valid_time,
+    epoch, train_loss, valid_loss, f1_weighted, train_time, valid_time,
     retain_precision, retain_recall, retain_f1,
     churn_signal_precision, churn_signal_recall, churn_signal_f1,
     weighted avg_precision, weighted avg_recall, weighted avg_f1
@@ -416,7 +428,8 @@ def make_record(
 
     return {
         "epoch":       epoch,
-        "loss":        round(loss, 6) if loss is not None else None,
+        "train_loss":  round(train_loss, 6) if train_loss is not None else None,
+        "valid_loss":  round(valid_loss, 6) if valid_loss is not None else None,
         "f1_weighted": round(f1, 6),
         "train_time":  round(train_time, 2) if train_time is not None else None,
         "valid_time":  round(valid_time, 2),
@@ -462,10 +475,12 @@ def run_training(
         )
 
         # Valid
-        f1, report_str, report_dict, valid_time = validate(model, valid_loader, device)
+        val_loss, f1, report_str, report_dict, valid_time = validate(
+            model, valid_loader, criterion, device, loss_type
+        )
 
         print(
-            f"  Loss={avg_loss:.4f} | F1={f1:.4f} | "
+            f"  Train Loss={avg_loss:.4f} | Valid Loss={val_loss:.4f} | F1={f1:.4f} | "
             f"Train {train_time:.1f}s | Valid {valid_time:.1f}s"
         )
         print(report_str)
@@ -473,7 +488,8 @@ def run_training(
         records.append(make_record(
             report_dict = report_dict,
             epoch       = epoch,
-            loss        = avg_loss,
+            train_loss  = avg_loss,
+            valid_loss  = val_loss,
             f1          = f1,
             train_time  = train_time,
             valid_time  = valid_time,

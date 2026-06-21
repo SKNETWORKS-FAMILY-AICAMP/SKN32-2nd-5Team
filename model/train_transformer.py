@@ -190,7 +190,8 @@ def run(
     records.append(make_record(
         report_dict = test_report_dict,
         epoch       = "test",
-        loss        = None,
+        train_loss  = None,
+        valid_loss  = None,
         f1          = test_f1,
         train_time  = None,
         valid_time  = test_time,
