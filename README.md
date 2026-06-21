@@ -1,21 +1,21 @@
 # SKN32-2nd-5Team
 
 ## Git Convention
-1. main은 직접 수정 금지  
-2. 각자 브랜치 생성 후 작업
-3. 작업 시작 전에는 항상 main에서 pull 받기
-4. 프로젝트 시작 전 개발환경 동일하게 설정(. gitignore, requests.txt 등)
-브랜치 통합은 모두 있을 때 진행
+1\. main은 직접 수정 금지    
+2\. 각자 브랜치 생성 후 작업  
+3\. 작업 시작 전에는 항상 main에서 pull 받기  
+4\. 프로젝트 시작 전 개발환경 동일하게 설정(. gitignore, requests.txt 등)  
+5\. 브랜치 통합은 모두 있을 때 진행
 
 ## 개발환경 설정
 #### 1. 로컬 환경에 Git 복사하기
-```
+```bash
 # 프로젝트를 생성할 위치에서 실행  
 
 git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN32-2nd-5Team.git
 ```
 #### 2. 가상 환경 만들기 & 활성화
-```
+```bash
 # 가상 환경 생성
 python -m venv .venv
 
@@ -23,16 +23,16 @@ python -m venv .venv
 .venv\Scripts\activate.bat
 ```
 #### 3. 패키지 설치
-```
+```bash
 pip install -r requirements.txt
 ```
 #### 4. main 브랜치를 복사한 개인용 브랜치 생성
-```
+```bash
 # 브랜치 생성 후 이동
 git checkout -b 개인용브랜치이름  
 ```
 #### 5. 생성된 개인 브랜치에서 작업 후 원격 브랜치에 업로드
-```
+```bash
 # 작업 내용 모두 스테이징
 git add .   
 
@@ -97,7 +97,7 @@ SKN32-2nd-5Team
 
 실행 경로 : preprocessing/  
 터미널에서 경로 이동 :  
-```cmd
+```bash
 cd preprocessing
 ```
    
