@@ -162,3 +162,8 @@ cd preprocessing
 
 ## 데이터 전처리 결과 보고서
 - [바로가기](reports/data-preprocessing/preprocessing_report.md)
+
+---
+
+## 인공지능 학습 결과서
+- [바로가기](<reports/model-training-results/(Churn-Zero_AI)인공지능_학습_결과_보고서.pdf>)
