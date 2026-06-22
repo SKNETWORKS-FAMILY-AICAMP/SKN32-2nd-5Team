@@ -65,6 +65,7 @@ git commit -m "커밋 메세지"
 git push origin 개인용브랜치이름   
 ```
 
+---
 
 ## 📒 프로젝트 구조
 ```text
@@ -99,6 +100,8 @@ SKN32-2nd-5Team
 └── requirements.txt
 ```
 
+---
+
 ## 🧾 데이터셋 불러오기
 #### 1. 'AI Hub' 홈페이지 로그인  [링크🔗](https://www.google.com)
 #### 2. 민원(콜센터) 질의-응답 데이터 다운로드
@@ -114,6 +117,8 @@ SKN32-2nd-5Team
 
 #### 3. 프로젝트에 데이터셋 추가
 - 프로젝트 루트에 data 폴더 생성 후 Training.json, Validation.json 추가
+
+---
 
 ## 🧾 데이터셋 전처리
 
@@ -147,9 +152,13 @@ cd preprocessing
     - output/duplicate_valid.csv: 원본 valid 내부에서 label+text 기준으로 중복된 모든 행을 모아둔 파일
     - output/duplicate_cross.csv: train과 valid 양쪽에 동일한 (label, text) 쌍이 존재한 행들을 모은 파일
 
+---
+
 ## 📝 모델 학습
 #### 1. model/{모델명}.py 실행하여 모델을 학습
 - preprocessing/output/ 경로에 생성된 실험 결과(.json)와 최적 모델 가중치(.pt) 파일 확인
 
-## 데이터 분석 · 전처리
-- [바로가기](reports/data-processiing/preprocessing_report.md)
+---
+
+## 데이터 전처리 결과 보고서
+- [바로가기](reports/data-preprocessing/preprocessing_report.md)
