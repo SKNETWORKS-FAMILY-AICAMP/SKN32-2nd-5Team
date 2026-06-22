@@ -13,7 +13,7 @@ from transformers import AutoTokenizer
 # CONFIG (필요 시 외부에서 오버라이드 가능)
 #################################################
 DATA_PATH  = Path("../output/analysis_dataset.json")
-REPORT_DIR = Path("../reports")
+REPORT_DIR = Path("../reports/data-preprocessing")
 CSV_DIR    = Path("../output")
 
 TOKENIZER_NAME  = "klue/bert-base"

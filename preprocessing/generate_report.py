@@ -6,7 +6,7 @@ from datetime import datetime
 #################################################
 # CONFIG
 #################################################
-REPORT_DIR    = Path("../reports")
+REPORT_DIR    = Path("../reports/data-preprocessing")
 CSV_DIR       = Path("../output")
 ANALYSIS_JSON = REPORT_DIR / "analysis_result.json"
 REPORT_PATH   = REPORT_DIR / "preprocessing_report.md"
