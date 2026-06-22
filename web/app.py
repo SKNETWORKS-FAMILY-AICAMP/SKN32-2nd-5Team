@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # --- 설정 ---
-FILE_PATH = "voc_test.csv"
+FILE_PATH = "voc_test.json"
 CUSTOMER_NAMES = {
     "D001": "김민준", "D002": "박서연", "D003": "이도현", "D004": "최유진", "D005": "정지훈"
 }
