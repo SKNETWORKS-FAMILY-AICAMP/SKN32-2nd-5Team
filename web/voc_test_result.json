@@ -1,0 +1,627 @@
+[
+  {
+    "dialog_id": "D001",
+    "conversation": [
+      {
+        "seq": 1,
+        "role": "고객",
+        "text": "안녕하세요 실손보험 가입 관련해서 문의드리려고 합니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0025,
+          "retain_prob": 0.9975,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0314,
+          "retain_prob": 0.9686,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 2,
+        "role": "상담사",
+        "text": "안녕하세요 고객님. 실손보험 가입 문의 주셨군요. 어떤 점이 궁금하신가요?"
+      },
+      {
+        "seq": 3,
+        "role": "고객",
+        "text": "현재 가입 가능한 상품이 있는지 확인하고 싶습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0027,
+          "retain_prob": 0.9973,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0272,
+          "retain_prob": 0.9728,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 4,
+        "role": "상담사",
+        "text": "네 가능합니다. 가입 가능 여부 확인을 위해 고객님의 연령과 직업을 알려주시겠습니까?"
+      },
+      {
+        "seq": 5,
+        "role": "고객",
+        "text": "35세 회사원입니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0025,
+          "retain_prob": 0.9975,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0286,
+          "retain_prob": 0.9714,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 6,
+        "role": "상담사",
+        "text": "확인 감사합니다. 고객님께서는 실손보험 가입이 가능하며 기본형과 특약형 중 선택하실 수 있습니다."
+      },
+      {
+        "seq": 7,
+        "role": "고객",
+        "text": "기본형으로 가입하면 월 보험료가 어느 정도인가요?",
+        "LSTM_predict": {
+          "churn_prob": 0.0027,
+          "retain_prob": 0.9973,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0496,
+          "retain_prob": 0.9504,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 8,
+        "role": "상담사",
+        "text": "고객님의 조건 기준으로 월 약 2만 5천 원 수준으로 예상됩니다."
+      },
+      {
+        "seq": 9,
+        "role": "고객",
+        "text": "가입 절차는 어떻게 진행되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.0037,
+          "retain_prob": 0.9963,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.039,
+          "retain_prob": 0.961,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 10,
+        "role": "상담사",
+        "text": "본인 확인 후 청약서를 작성해 주시면 심사 절차를 거쳐 가입이 완료됩니다."
+      },
+      {
+        "seq": 11,
+        "role": "고객",
+        "text": "그럼 가입 신청 진행 부탁드립니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0026,
+          "retain_prob": 0.9974,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0282,
+          "retain_prob": 0.9718,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 12,
+        "role": "상담사",
+        "text": "네 고객님. 가입 신청 접수를 도와드리겠습니다."
+      }
+    ]
+  },
+  {
+    "dialog_id": "D002",
+    "conversation": [
+      {
+        "seq": 1,
+        "role": "고객",
+        "text": "안녕하세요 적금 상품을 해지하고 싶습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.9986,
+          "retain_prob": 0.0014,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.996,
+          "retain_prob": 0.004,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 2,
+        "role": "상담사",
+        "text": "안녕하세요 고객님. 적금 해지 문의 도와드리겠습니다."
+      },
+      {
+        "seq": 3,
+        "role": "고객",
+        "text": "만기 전에 해지해도 가능한가요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9986,
+          "retain_prob": 0.0014,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9978,
+          "retain_prob": 0.0022,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 4,
+        "role": "상담사",
+        "text": "네 가능합니다. 다만 중도해지 시 약정 금리보다 낮은 중도해지 금리가 적용됩니다."
+      },
+      {
+        "seq": 5,
+        "role": "고객",
+        "text": "중도해지 시 이자가 얼마나 줄어드는지 알 수 있을까요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9984,
+          "retain_prob": 0.0016,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.7538,
+          "retain_prob": 0.2462,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 6,
+        "role": "상담사",
+        "text": "계좌별 조건에 따라 다르지만 예상 이자는 기존 대비 상당 부분 감소할 수 있습니다."
+      },
+      {
+        "seq": 7,
+        "role": "고객",
+        "text": "해지 신청은 모바일에서도 가능한가요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9985,
+          "retain_prob": 0.0015,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9974,
+          "retain_prob": 0.0026,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 8,
+        "role": "상담사",
+        "text": "네 모바일 앱에서 본인 인증 후 해지 신청이 가능합니다."
+      },
+      {
+        "seq": 9,
+        "role": "고객",
+        "text": "해지 후 원금은 언제 입금되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9985,
+          "retain_prob": 0.0015,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9972,
+          "retain_prob": 0.0028,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 10,
+        "role": "상담사",
+        "text": "해지 완료 즉시 연결된 출금 계좌로 입금됩니다."
+      },
+      {
+        "seq": 11,
+        "role": "고객",
+        "text": "그럼 모바일로 진행해보겠습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0059,
+          "retain_prob": 0.9941,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0615,
+          "retain_prob": 0.9385,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 12,
+        "role": "상담사",
+        "text": "네 진행 중 문제가 발생하면 다시 문의 부탁드립니다."
+      }
+    ]
+  },
+  {
+    "dialog_id": "D003",
+    "conversation": [
+      {
+        "seq": 1,
+        "role": "고객",
+        "text": "자동차보험을 신규 가입하려고 합니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0029,
+          "retain_prob": 0.9971,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0247,
+          "retain_prob": 0.9753,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 2,
+        "role": "상담사",
+        "text": "안녕하세요 고객님. 자동차보험 가입 상담 도와드리겠습니다."
+      },
+      {
+        "seq": 3,
+        "role": "고객",
+        "text": "현재 차량을 새로 구매해서 보험이 필요합니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0027,
+          "retain_prob": 0.9973,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0455,
+          "retain_prob": 0.9545,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 4,
+        "role": "상담사",
+        "text": "차량 정보와 운전자 범위를 알려주시면 가입 가능 상품을 안내해 드리겠습니다."
+      },
+      {
+        "seq": 5,
+        "role": "고객",
+        "text": "운전자는 본인만 하고 차량은 중형 세단입니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.003,
+          "retain_prob": 0.997,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0351,
+          "retain_prob": 0.9649,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 6,
+        "role": "상담사",
+        "text": "확인했습니다. 고객님 조건에 맞는 표준형 상품 가입이 가능합니다."
+      },
+      {
+        "seq": 7,
+        "role": "고객",
+        "text": "보험료는 어느 정도 예상되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.0037,
+          "retain_prob": 0.9963,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0475,
+          "retain_prob": 0.9525,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 8,
+        "role": "상담사",
+        "text": "사고 이력에 따라 다르지만 연간 약 70만 원 수준으로 예상됩니다."
+      },
+      {
+        "seq": 9,
+        "role": "고객",
+        "text": "가입하면 바로 보장이 시작되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.003,
+          "retain_prob": 0.997,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0272,
+          "retain_prob": 0.9728,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 10,
+        "role": "상담사",
+        "text": "보험료 결제 후 계약이 정상 승인되면 지정일 기준으로 보장이 개시됩니다."
+      },
+      {
+        "seq": 11,
+        "role": "고객",
+        "text": "오늘부터 보장받을 수 있게 가입하고 싶습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0024,
+          "retain_prob": 0.9976,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0391,
+          "retain_prob": 0.9609,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 12,
+        "role": "상담사",
+        "text": "네 고객님. 오늘 개시 조건으로 가입 절차를 진행해 드리겠습니다."
+      }
+    ]
+  },
+  {
+    "dialog_id": "D004",
+    "conversation": [
+      {
+        "seq": 1,
+        "role": "고객",
+        "text": "사용하지 않는 신용카드를 해지하려고 합니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.9985,
+          "retain_prob": 0.0015,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9961,
+          "retain_prob": 0.0039,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 2,
+        "role": "상담사",
+        "text": "안녕하세요 고객님. 카드 해지 관련 안내 드리겠습니다."
+      },
+      {
+        "seq": 3,
+        "role": "고객",
+        "text": "해지 전에 확인해야 할 사항이 있나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9985,
+          "retain_prob": 0.0015,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9968,
+          "retain_prob": 0.0032,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 4,
+        "role": "상담사",
+        "text": "네. 결제 예정 금액과 포인트 잔액, 자동이체 등록 여부를 확인하셔야 합니다."
+      },
+      {
+        "seq": 5,
+        "role": "고객",
+        "text": "포인트가 남아 있는데 해지 후에도 사용할 수 있나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9985,
+          "retain_prob": 0.0015,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9949,
+          "retain_prob": 0.0051,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 6,
+        "role": "상담사",
+        "text": "카드 해지 시 포인트가 소멸될 수 있으므로 사용 후 해지를 권장드립니다."
+      },
+      {
+        "seq": 7,
+        "role": "고객",
+        "text": "자동이체는 다른 카드로 변경하겠습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0029,
+          "retain_prob": 0.9971,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0227,
+          "retain_prob": 0.9773,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 8,
+        "role": "상담사",
+        "text": "좋습니다. 변경 완료 후 해지 신청이 가능합니다."
+      },
+      {
+        "seq": 9,
+        "role": "고객",
+        "text": "연회비는 환불되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9986,
+          "retain_prob": 0.0014,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.8886,
+          "retain_prob": 0.1114,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 10,
+        "role": "상담사",
+        "text": "잔여 기간에 따라 일부 환불될 수 있습니다."
+      },
+      {
+        "seq": 11,
+        "role": "고객",
+        "text": "그럼 해지 진행 부탁드립니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.9986,
+          "retain_prob": 0.0014,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9971,
+          "retain_prob": 0.0029,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 12,
+        "role": "상담사",
+        "text": "네 본인 확인 후 카드 해지를 접수하겠습니다."
+      }
+    ]
+  },
+  {
+    "dialog_id": "D005",
+    "conversation": [
+      {
+        "seq": 1,
+        "role": "고객",
+        "text": "펀드 상품 가입을 고려 중입니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0024,
+          "retain_prob": 0.9976,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0308,
+          "retain_prob": 0.9692,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 2,
+        "role": "상담사",
+        "text": "안녕하세요 고객님. 펀드 가입 상담 도와드리겠습니다."
+      },
+      {
+        "seq": 3,
+        "role": "고객",
+        "text": "안정형 상품을 찾고 있습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0028,
+          "retain_prob": 0.9972,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.032,
+          "retain_prob": 0.968,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 4,
+        "role": "상담사",
+        "text": "고객님의 투자 성향 분석 결과에 따라 안정형 펀드를 추천드릴 수 있습니다."
+      },
+      {
+        "seq": 5,
+        "role": "고객",
+        "text": "가입 금액은 최소 얼마인가요?",
+        "LSTM_predict": {
+          "churn_prob": 0.5173,
+          "retain_prob": 0.4827,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0353,
+          "retain_prob": 0.9647,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 6,
+        "role": "상담사",
+        "text": "상품에 따라 다르지만 일반적으로 10만 원부터 가입 가능합니다."
+      },
+      {
+        "seq": 7,
+        "role": "고객",
+        "text": "중도 해지도 가능한가요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9986,
+          "retain_prob": 0.0014,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.998,
+          "retain_prob": 0.002,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 8,
+        "role": "상담사",
+        "text": "네 환매 신청을 통해 중도 해지가 가능합니다."
+      },
+      {
+        "seq": 9,
+        "role": "고객",
+        "text": "환매하면 언제 출금되나요?",
+        "LSTM_predict": {
+          "churn_prob": 0.9984,
+          "retain_prob": 0.0016,
+          "predicted": "churn_signal"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.9711,
+          "retain_prob": 0.0289,
+          "predicted": "churn_signal"
+        }
+      },
+      {
+        "seq": 10,
+        "role": "상담사",
+        "text": "상품별 기준가 산정 후 통상 2~4영업일 내 지급됩니다."
+      },
+      {
+        "seq": 11,
+        "role": "고객",
+        "text": "가입 신청을 진행하고 싶습니다.",
+        "LSTM_predict": {
+          "churn_prob": 0.0025,
+          "retain_prob": 0.9975,
+          "predicted": "retain"
+        },
+        "Transformer (Scratch)_predict": {
+          "churn_prob": 0.0287,
+          "retain_prob": 0.9713,
+          "predicted": "retain"
+        }
+      },
+      {
+        "seq": 12,
+        "role": "상담사",
+        "text": "네 투자설명서 확인 후 가입 절차를 진행하겠습니다."
+      }
+    ]
+  }
+]
