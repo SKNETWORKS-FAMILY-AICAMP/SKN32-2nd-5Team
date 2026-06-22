@@ -1,13 +1,35 @@
 # SKN32-2nd-5Team
+## 💭 프로젝트명 : Churn-Zero AI (가입 고객 이탈 예측 시스템)  
 
-## Git Convention
+![Python](https://img.shields.io/badge/Python-3.10-3776AB)
+![Pandas](https://img.shields.io/badge/Pandas-3.0.3-150458)
+![NumPy](https://img.shields.io/badge/NumPy-2.5.0-013243)
+![matplotlib](https://img.shields.io/badge/matplotlib-3.11.0-FF7F0E)
+![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.12.1-EE4C2C)
+![Scikit--learn](https://img.shields.io/badge/Scikit--learn-1.9.0-F7931E)
+![tqdm](https://img.shields.io/badge/tqdm-4.68.3-FFC107)
+
+---
+
+## 😃 구성원 소개
+### 팀명 : 딥콰이어트🤫
+
+| 이름 | 역할 |
+| :---- | :--- |
+| 하정원 | Text-CNN 모델 학습 |
+| 권소라 | 데이터 정제 및 중복 제거, KLUE-BERT Fine-tuning |
+| 김지혜 | 데이터 정제 및 중복 제거, LSTM 모델 학습 |
+| 신누리 | 데이터 정제 및 중복 제거, 데이터 분할 및 분포 조정, 언어 모델 입력을 위한 변환, Transformer Encoder (Scratch) 모델 학습 |
+
+## 📜 Git Convention
 1\. main은 직접 수정 금지    
 2\. 각자 브랜치 생성 후 작업  
 3\. 작업 시작 전에는 항상 main에서 pull 받기  
 4\. 프로젝트 시작 전 개발환경 동일하게 설정(. gitignore, requests.txt 등)  
 5\. 브랜치 통합은 모두 있을 때 진행
 
-## 개발환경 설정
+## 🧑‍💻 개발환경 설정
 #### 1. 로컬 환경에 Git 복사하기
 ```bash
 # 프로젝트를 생성할 위치에서 실행  
@@ -44,7 +66,7 @@ git push origin 개인용브랜치이름
 ```
 
 
-## 프로젝트 구조
+## 📒 프로젝트 구조
 ```text
 SKN32-2nd-5Team
 ├── data/
@@ -77,7 +99,7 @@ SKN32-2nd-5Team
 └── requirements.txt
 ```
 
-## 데이터셋 불러오기
+## 🧾 데이터셋 불러오기
 #### 1. 'AI Hub' 홈페이지 로그인  [링크🔗](https://www.google.com)
 #### 2. 민원(콜센터) 질의-응답 데이터 다운로드
 - https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=98 링크
@@ -93,7 +115,7 @@ SKN32-2nd-5Team
 #### 3. 프로젝트에 데이터셋 추가
 - 프로젝트 루트에 data 폴더 생성 후 Training.json, Validation.json 추가
 
-## 데이터셋 전처리
+## 🧾 데이터셋 전처리
 
 실행 경로 : preprocessing/  
 터미널에서 경로 이동 :  
@@ -125,6 +147,9 @@ cd preprocessing
     - output/duplicate_valid.csv: 원본 valid 내부에서 label+text 기준으로 중복된 모든 행을 모아둔 파일
     - output/duplicate_cross.csv: train과 valid 양쪽에 동일한 (label, text) 쌍이 존재한 행들을 모은 파일
 
-## 모델 학습
+## 📝 모델 학습
 #### 1. model/{모델명}.py 실행하여 모델을 학습
 - preprocessing/output/ 경로에 생성된 실험 결과(.json)와 최적 모델 가중치(.pt) 파일 확인
+
+## 데이터 분석 · 전처리
+- [바로가기](reports/data-processiing/preprocessing_report.md)
