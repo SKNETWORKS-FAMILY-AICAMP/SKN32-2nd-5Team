@@ -86,7 +86,6 @@ SKN32-2nd-5Team
 │
 ├── preprocessing
 │   ├── data_analysis.py
-│   ├── dataset_test_2.py
 │   ├── generate_report.py
 │   ├── labeling.py
 │   ├── prepare_dataset.py
@@ -94,6 +93,7 @@ SKN32-2nd-5Team
 │
 ├── reports/
 ├── temp/
+├── web/
 │
 ├── .gitignore
 ├── README.md
