@@ -1,7 +1,7 @@
 """
 predict.py
 ────────────────────────────────────────────────────────────────────────────────
-단건 문장 추론 스크립트
+문장 추론 스크립트
   - 저장된 4개 모델의 best 가중치를 불러와 단일 문장을 추론합니다.
   - logits → softmax → churn_signal 확률 출력
   - 사용법: python predict.py
@@ -10,13 +10,21 @@ predict.py
 """
 
 import argparse
-import math
+import json
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import AutoModel
+
+#################################################
+# 모델 정의  (train_*.py 와 완전히 동일 — 가중치 로드에 필요)
+#################################################
+from train_cnn import CNNClassifier
+from train_lstm import LSTMClassifier
+from train_transformer import TransformerClassifier
+from train_bert import BertClassifier
+
 
 #################################################
 # utils 공통 상수 / 토크나이저
@@ -28,105 +36,6 @@ from utils import (
 
 OUTPUT_DIR = Path("./output")
 DEVICE     = "cuda" if torch.cuda.is_available() else "cpu"
-
-
-#################################################
-# 모델 정의  (train_*.py 와 완전히 동일 — 가중치 로드에 필요)
-#################################################
-
-class CNNClassifier(nn.Module):
-    def __init__(self, vocab_size, num_classes=NUM_CLASSES,
-                 embed_dim=128, num_filters=128):
-        super().__init__()
-        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.convs     = nn.ModuleList([
-            nn.Conv1d(embed_dim, num_filters, kernel_size=k, padding=k // 2)
-            for k in (2, 3, 4)
-        ])
-        self.dropout   = nn.Dropout(0.3)
-        self.fc        = nn.Linear(num_filters * 3, num_classes)
-
-    def forward(self, input_ids, attention_mask=None):
-        x = self.embedding(input_ids).permute(0, 2, 1)
-        pooled = [torch.relu(conv(x)).max(dim=2).values for conv in self.convs]
-        return self.fc(self.dropout(torch.cat(pooled, dim=1)))
-
-
-class LSTMClassifier(nn.Module):
-    def __init__(self, vocab_size, num_classes=NUM_CLASSES,
-                 embed_dim=128, hidden_size=128, num_layers=2,
-                 bidirectional=False, dropout=0.3):
-        super().__init__()
-        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.lstm      = nn.LSTM(
-            embed_dim, hidden_size, num_layers=num_layers,
-            batch_first=True, bidirectional=bidirectional,
-            dropout=dropout if num_layers > 1 else 0.0,
-        )
-        self.dropout   = nn.Dropout(dropout)
-        dir_mult       = 2 if bidirectional else 1
-        self.fc        = nn.Linear(hidden_size * dir_mult, num_classes)
-
-    def forward(self, input_ids, attention_mask=None):
-        x = self.embedding(input_ids)
-        _, (h_n, _) = self.lstm(x)
-        h = torch.cat([h_n[-2], h_n[-1]], dim=1) if self.lstm.bidirectional else h_n[-1]
-        return self.fc(self.dropout(h))
-
-
-class PositionalEncoding(nn.Module):
-    def __init__(self, embed_dim, max_len=MAX_LEN, dropout=0.1):
-        super().__init__()
-        self.dropout = nn.Dropout(dropout)
-        pe    = torch.zeros(max_len, embed_dim)
-        pos   = torch.arange(max_len).unsqueeze(1)
-        denom = torch.exp(torch.arange(0, embed_dim, 2) * (-math.log(10000.0) / embed_dim))
-        pe[:, 0::2] = torch.sin(pos * denom)
-        pe[:, 1::2] = torch.cos(pos * denom)
-        self.register_buffer("pe", pe.unsqueeze(0))
-
-    def forward(self, x):
-        return self.dropout(x + self.pe[:, : x.size(1)])
-
-
-class TransformerClassifier(nn.Module):
-    def __init__(self, vocab_size, num_classes=NUM_CLASSES,
-                 embed_dim=128, nhead=4, num_layers=2,
-                 ff_dim=256, max_len=MAX_LEN, dropout=0.1):
-        super().__init__()
-        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.pos_enc   = PositionalEncoding(embed_dim, max_len, dropout)
-        encoder_layer  = nn.TransformerEncoderLayer(
-            d_model=embed_dim, nhead=nhead, dim_feedforward=ff_dim,
-            dropout=dropout, batch_first=True, norm_first=True,
-        )
-        self.encoder   = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
-        self.dropout   = nn.Dropout(dropout)
-        self.fc        = nn.Linear(embed_dim, num_classes)
-
-    def forward(self, input_ids, attention_mask=None):
-        key_padding_mask = (input_ids == 0)
-        x = self.pos_enc(self.embedding(input_ids))
-        x = self.encoder(x, src_key_padding_mask=key_padding_mask)
-        return self.fc(self.dropout(x[:, 0, :]))
-
-
-class BertClassifier(nn.Module):
-    def __init__(self, model_name=TOKENIZER_NAME,
-                 num_classes=NUM_CLASSES, dropout=0.1, freeze_layers=0):
-        super().__init__()
-        self.bert    = AutoModel.from_pretrained(model_name)
-        hidden_size  = self.bert.config.hidden_size
-        if freeze_layers > 0:
-            for layer in self.bert.encoder.layer[:freeze_layers]:
-                for p in layer.parameters():
-                    p.requires_grad = False
-        self.dropout = nn.Dropout(dropout)
-        self.fc      = nn.Linear(hidden_size, num_classes)
-
-    def forward(self, input_ids, attention_mask):
-        out = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        return self.fc(self.dropout(out.last_hidden_state[:, 0, :]))
 
 
 #################################################
@@ -195,59 +104,63 @@ def predict_single(
 # 메인
 #################################################
 
-def run(text: str) -> None:
+def run(text_list: list[str]) -> list[dict]:
     set_seed(42)
 
     tokenizer  = get_tokenizer(TOKENIZER_NAME)
     vocab_size = tokenizer.vocab_size
 
-    # 입력 인코딩
-    input_ids, attention_mask = encode_text(text, tokenizer)
-
     # 모델 설정  (train_*.py 와 동일한 하이퍼파라미터)
     models_cfg = [
-        {
-            "name":   "CNN",
-            "model":  CNNClassifier(vocab_size=vocab_size),
-            "weight": OUTPUT_DIR / "cnn_best.pt",
-        },
-        {
-            "name":   "LSTM",
-            "model":  LSTMClassifier(vocab_size=vocab_size),
-            "weight": OUTPUT_DIR / "lstm_best.pt",
-        },
+        # {
+        #     "name":   "CNN",
+        #     "model":  CNNClassifier(vocab_size=vocab_size),
+        #     "weight": OUTPUT_DIR / "cnn_best.pt",
+        # },
+        # {
+        #     "name":   "LSTM",
+        #     "model":  LSTMClassifier(vocab_size=vocab_size),
+        #     "weight": OUTPUT_DIR / "lstm_best.pt",
+        # },
         {
             "name":   "Transformer (Scratch)",
             "model":  TransformerClassifier(vocab_size=vocab_size),
-            "weight": OUTPUT_DIR / "transformer_best.pt",
+            "weight": OUTPUT_DIR / "transformer_f1_best.pt",
         },
-        {
-            "name":   "BERT (klue/bert-base)",
-            "model":  BertClassifier(),
-            "weight": OUTPUT_DIR / "bert_best.pt",
-        },
+        # {
+        #     "name":   "BERT (klue/bert-base)",
+        #     "model":  BertClassifier(),
+        #     "weight": OUTPUT_DIR / "bert_best.pt",
+        # },
     ]
 
     # 추론 및 출력
     print("=" * 60)
-    print(f"입력 문장: \"{text}\"")
+    print(f"입력 문장: \"{text_list}\"")
     print("=" * 60)
 
+    result_list = []
     for cfg in models_cfg:
         print(f"\n [{cfg['name']}]")
         try:
             model = load_model(cfg["model"], cfg["weight"])
-            result = predict_single(model, input_ids, attention_mask)
+            for text in text_list:
+                # 입력 인코딩
+                input_ids, attention_mask = encode_text(text, tokenizer)
+                result = predict_single(model, input_ids, attention_mask)
 
-            bar_churn  = "-" * int(result["churn_prob"]  * 20)
-            bar_retain = "-" * int(result["retain_prob"] * 20)
+                bar_churn  = "-" * int(result["churn_prob"]  * 20)
+                bar_retain = "-" * int(result["retain_prob"] * 20)
 
-            print(f"  예측 라벨    : {result['predicted']}")
-            print(f"  churn_signal : {result['churn_prob']:.4f}  |{bar_churn:<20}|")
-            print(f"  retain       : {result['retain_prob']:.4f}  |{bar_retain:<20}|")
-            print(f"  logits       : retain={result['logits'][0]:.4f}, "
-                  f"churn_signal={result['logits'][1]:.4f}")
+                print(f"  예측 라벨    : {result['predicted']}")
+                print(f"  churn_signal : {result['churn_prob']:.4f}  |{bar_churn:<20}|")
+                print(f"  retain       : {result['retain_prob']:.4f}  |{bar_retain:<20}|")
+                print(f"  logits       : retain={result['logits'][0]:.4f}, "
+                      f"churn_signal={result['logits'][1]:.4f}")
 
+                result['model_name'] = cfg['name']
+                result['text'] = text
+                result_list.append(result)
         except FileNotFoundError as e:
             print(f"  [WARN]  {e}")
         except Exception as e:
@@ -255,6 +168,20 @@ def run(text: str) -> None:
 
     print("\n" + "=" * 60)
 
+    return result_list
+
+def save_results(data, type_name):
+    output_file = OUTPUT_DIR / f"predict_result_{type_name}.json"
+    with output_file.open(
+            "w",
+            encoding="utf-8",
+    ) as f:
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="단건 문장 churn 예측")
@@ -265,4 +192,37 @@ if __name__ == "__main__":
         help="추론할 문장 (기본값: '해지를 하는게 맞을지 아닌지 고민이되요')",
     )
     args = parser.parse_args()
-    run(args.text)
+    predict_result_list = run([args.text])
+    save_results(predict_result_list, "single")
+
+    very_high_signals = [
+        "이번 달까지만 보험 유지하고 해지하겠습니다.",
+        "자동이체 해지 방법 알려주세요.",
+        "더 이상 가입 유지할 이유가 없어서 계약 해지하려고 합니다.",
+        "다른 보험 상품으로 갈아탈 예정이라 기존 계약 해지하려고 합니다.",
+        "보험 해지하고 환급금 받고 싶습니다.",
+        "납입 부담이 없어서 유지할 필요가 없어 해지하려고 합니다.",
+        "보장 내용이 기대 이하라서 해지하려고 합니다.",
+        "오늘 바로 보험 계약 해지 가능한가요?",
+        "다음 보험료 결제 전에 해지 처리 부탁드립니다.",
+        "보험 계약 해지 절차 어떻게 되나요?",
+    ]
+
+    predict_result_list = run(very_high_signals)
+    save_results(predict_result_list, "very_high_signals")
+
+    low_signals = [
+        "보험 상품이 만족스러워서 계속 유지할 예정입니다.",
+        "자동이체 그대로 유지해주세요.",
+        "장기적으로 보험 유지할 계획입니다.",
+        "최근 보장 내용 업데이트가 마음에 듭니다.",
+        "주변에도 해당 보험 추천하고 있습니다.",
+        "다음 달에도 계속 보험 유지할 생각입니다.",
+        "보장 강화된 상품으로 업그레이드하려고 합니다.",
+        "보장 금액이 점점 늘어나고 있습니다.",
+        "보험 서비스에 매우 만족합니다.",
+        "계약 갱신 진행 부탁드립니다.",
+    ]
+
+    predict_result_list = run(low_signals)
+    save_results(predict_result_list, "low_signals")
