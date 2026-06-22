@@ -72,7 +72,7 @@ with col1:
 with col2:
     target_id = st.session_state.get('selected_dialog')
     if target_id:
-        st.markdown(f"### {CUSTOMER_NAMES.get(target_id, '고객')}님과의 대화")
+        st.markdown(f"### {CUSTOMER_NAMES.get(target_id, '고객')}님과의 상담 내역")
 
         st.markdown('<p class="model-label">모델 선택</p>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
