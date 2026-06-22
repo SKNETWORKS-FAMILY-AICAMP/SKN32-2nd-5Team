@@ -226,3 +226,19 @@ if __name__ == "__main__":
 
     predict_result_list = run(low_signals)
     save_results(predict_result_list, "low_signals")
+
+    medium_signals = [
+        "아직 결정은 못 했는데 보험 유지 여부 고민 중입니다.",
+        "보험 상품을 생각보다 자주 확인하지는 않네요.",
+        "보험료 대비 보장이 괜찮은지 모르겠습니다.",
+        "한두 달 더 유지해보고 결정할 것 같습니다.",
+        "보장 내용은 괜찮지만 보험료가 아쉽네요.",
+        "기대했던 보험 혜택과 조금 다릅니다.",
+        "보험 사용(청구) 빈도가 줄어들고 있습니다.",
+        "최근 보험 만족도가 예전만 못합니다.",
+        "다른 보험 상품을 찾아보고 있습니다.",
+        "보험 갱신 시점에 다시 검토할 예정입니다.",
+    ]
+
+    predict_result_list = run(medium_signals)
+    save_results(predict_result_list, "medium_signals")
