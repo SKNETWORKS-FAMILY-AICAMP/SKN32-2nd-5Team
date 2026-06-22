@@ -7,8 +7,8 @@
         "role": "고객",
         "text": "안녕하세요 실손보험 가입 관련해서 문의드리려고 합니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0025,
-          "retain_prob": 0.9975,
+          "churn_prob": 0.0789,
+          "retain_prob": 0.9211,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -27,8 +27,8 @@
         "role": "고객",
         "text": "현재 가입 가능한 상품이 있는지 확인하고 싶습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0027,
-          "retain_prob": 0.9973,
+          "churn_prob": 0.0782,
+          "retain_prob": 0.9218,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -47,8 +47,8 @@
         "role": "고객",
         "text": "35세 회사원입니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0025,
-          "retain_prob": 0.9975,
+          "churn_prob": 0.0837,
+          "retain_prob": 0.9163,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -67,8 +67,8 @@
         "role": "고객",
         "text": "기본형으로 가입하면 월 보험료가 어느 정도인가요?",
         "LSTM_predict": {
-          "churn_prob": 0.0027,
-          "retain_prob": 0.9973,
+          "churn_prob": 0.0806,
+          "retain_prob": 0.9194,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -87,8 +87,8 @@
         "role": "고객",
         "text": "가입 절차는 어떻게 진행되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.0037,
-          "retain_prob": 0.9963,
+          "churn_prob": 0.0773,
+          "retain_prob": 0.9227,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -107,8 +107,8 @@
         "role": "고객",
         "text": "그럼 가입 신청 진행 부탁드립니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0026,
-          "retain_prob": 0.9974,
+          "churn_prob": 0.087,
+          "retain_prob": 0.913,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -132,8 +132,8 @@
         "role": "고객",
         "text": "안녕하세요 적금 상품을 해지하고 싶습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.9986,
-          "retain_prob": 0.0014,
+          "churn_prob": 0.9818,
+          "retain_prob": 0.0182,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -152,8 +152,8 @@
         "role": "고객",
         "text": "만기 전에 해지해도 가능한가요?",
         "LSTM_predict": {
-          "churn_prob": 0.9986,
-          "retain_prob": 0.0014,
+          "churn_prob": 0.9829,
+          "retain_prob": 0.0171,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -172,8 +172,8 @@
         "role": "고객",
         "text": "중도해지 시 이자가 얼마나 줄어드는지 알 수 있을까요?",
         "LSTM_predict": {
-          "churn_prob": 0.9984,
-          "retain_prob": 0.0016,
+          "churn_prob": 0.981,
+          "retain_prob": 0.019,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -192,8 +192,8 @@
         "role": "고객",
         "text": "해지 신청은 모바일에서도 가능한가요?",
         "LSTM_predict": {
-          "churn_prob": 0.9985,
-          "retain_prob": 0.0015,
+          "churn_prob": 0.9812,
+          "retain_prob": 0.0188,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -212,8 +212,8 @@
         "role": "고객",
         "text": "해지 후 원금은 언제 입금되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.9985,
-          "retain_prob": 0.0015,
+          "churn_prob": 0.9818,
+          "retain_prob": 0.0182,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -232,8 +232,8 @@
         "role": "고객",
         "text": "그럼 모바일로 진행해보겠습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0059,
-          "retain_prob": 0.9941,
+          "churn_prob": 0.0787,
+          "retain_prob": 0.9213,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -257,8 +257,8 @@
         "role": "고객",
         "text": "자동차보험을 신규 가입하려고 합니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0029,
-          "retain_prob": 0.9971,
+          "churn_prob": 0.0799,
+          "retain_prob": 0.9201,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -277,8 +277,8 @@
         "role": "고객",
         "text": "현재 차량을 새로 구매해서 보험이 필요합니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0027,
-          "retain_prob": 0.9973,
+          "churn_prob": 0.0803,
+          "retain_prob": 0.9197,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -297,8 +297,8 @@
         "role": "고객",
         "text": "운전자는 본인만 하고 차량은 중형 세단입니다.",
         "LSTM_predict": {
-          "churn_prob": 0.003,
-          "retain_prob": 0.997,
+          "churn_prob": 0.0807,
+          "retain_prob": 0.9193,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -317,8 +317,8 @@
         "role": "고객",
         "text": "보험료는 어느 정도 예상되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.0037,
-          "retain_prob": 0.9963,
+          "churn_prob": 0.0824,
+          "retain_prob": 0.9176,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -337,8 +337,8 @@
         "role": "고객",
         "text": "가입하면 바로 보장이 시작되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.003,
-          "retain_prob": 0.997,
+          "churn_prob": 0.0771,
+          "retain_prob": 0.9229,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -357,8 +357,8 @@
         "role": "고객",
         "text": "오늘부터 보장받을 수 있게 가입하고 싶습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0024,
-          "retain_prob": 0.9976,
+          "churn_prob": 0.0771,
+          "retain_prob": 0.9229,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -382,8 +382,8 @@
         "role": "고객",
         "text": "사용하지 않는 신용카드를 해지하려고 합니다.",
         "LSTM_predict": {
-          "churn_prob": 0.9985,
-          "retain_prob": 0.0015,
+          "churn_prob": 0.9818,
+          "retain_prob": 0.0182,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -402,8 +402,8 @@
         "role": "고객",
         "text": "해지 전에 확인해야 할 사항이 있나요?",
         "LSTM_predict": {
-          "churn_prob": 0.9985,
-          "retain_prob": 0.0015,
+          "churn_prob": 0.9777,
+          "retain_prob": 0.0223,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -422,8 +422,8 @@
         "role": "고객",
         "text": "포인트가 남아 있는데 해지 후에도 사용할 수 있나요?",
         "LSTM_predict": {
-          "churn_prob": 0.9985,
-          "retain_prob": 0.0015,
+          "churn_prob": 0.9805,
+          "retain_prob": 0.0195,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -442,8 +442,8 @@
         "role": "고객",
         "text": "자동이체는 다른 카드로 변경하겠습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0029,
-          "retain_prob": 0.9971,
+          "churn_prob": 0.0806,
+          "retain_prob": 0.9194,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -462,8 +462,8 @@
         "role": "고객",
         "text": "연회비는 환불되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.9986,
-          "retain_prob": 0.0014,
+          "churn_prob": 0.9713,
+          "retain_prob": 0.0287,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -482,8 +482,8 @@
         "role": "고객",
         "text": "그럼 해지 진행 부탁드립니다.",
         "LSTM_predict": {
-          "churn_prob": 0.9986,
-          "retain_prob": 0.0014,
+          "churn_prob": 0.9803,
+          "retain_prob": 0.0197,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -507,8 +507,8 @@
         "role": "고객",
         "text": "펀드 상품 가입을 고려 중입니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0024,
-          "retain_prob": 0.9976,
+          "churn_prob": 0.0784,
+          "retain_prob": 0.9216,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -527,8 +527,8 @@
         "role": "고객",
         "text": "안정형 상품을 찾고 있습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0028,
-          "retain_prob": 0.9972,
+          "churn_prob": 0.0787,
+          "retain_prob": 0.9213,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
@@ -547,9 +547,9 @@
         "role": "고객",
         "text": "가입 금액은 최소 얼마인가요?",
         "LSTM_predict": {
-          "churn_prob": 0.5173,
-          "retain_prob": 0.4827,
-          "predicted": "churn_signal"
+          "churn_prob": 0.081,
+          "retain_prob": 0.919,
+          "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
           "churn_prob": 0.0353,
@@ -567,8 +567,8 @@
         "role": "고객",
         "text": "중도 해지도 가능한가요?",
         "LSTM_predict": {
-          "churn_prob": 0.9986,
-          "retain_prob": 0.0014,
+          "churn_prob": 0.9792,
+          "retain_prob": 0.0208,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -587,8 +587,8 @@
         "role": "고객",
         "text": "환매하면 언제 출금되나요?",
         "LSTM_predict": {
-          "churn_prob": 0.9984,
-          "retain_prob": 0.0016,
+          "churn_prob": 0.9707,
+          "retain_prob": 0.0293,
           "predicted": "churn_signal"
         },
         "Transformer (Scratch)_predict": {
@@ -607,8 +607,8 @@
         "role": "고객",
         "text": "가입 신청을 진행하고 싶습니다.",
         "LSTM_predict": {
-          "churn_prob": 0.0025,
-          "retain_prob": 0.9975,
+          "churn_prob": 0.0769,
+          "retain_prob": 0.9231,
           "predicted": "retain"
         },
         "Transformer (Scratch)_predict": {
