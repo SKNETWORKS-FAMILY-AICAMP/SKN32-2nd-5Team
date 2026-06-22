@@ -12,14 +12,14 @@ CUSTOMER_NAMES = {
 
 st.set_page_config(layout="wide", page_title="Churn-Zero AI")
 
-# CSS 스타일 정의 (밝은 테마 + 체크박스 검정 글씨)
+# CSS 스타일 정의
 st.markdown("""
     <style>
     .stApp { background-color: #f0f2f6; color: #333; }
     h3 { color: #333 !important; }
     .model-label { font-size: 1.0rem; font-weight: bold; color: #555; margin-bottom: 5px; }
 
-    /* [수정] 체크박스 내부 텍스트 태그(p)를 명확히 지정하여 검정색 강제 적용 */
+    /* 체크박스 텍스트 색상 및 굵기 강제 적용 */
     div[data-testid="stCheckbox"] label p {
         color: black !important;
         font-weight: bold !important;
@@ -112,14 +112,16 @@ with col2:
                     f'<div style="display:flex; justify-content:flex-start;"><div class="bubble bubble-user">{row["text"]}</div></div>',
                     unsafe_allow_html=True)
 
-                # 모델별 확률 출력
+                # 모델별 확률 출력 및 색상 조건부 적용
                 if is_lstm:
+                    color = "#28a745" if row['lstm_churn'] <= 0.5 else "#d9534f"
                     st.markdown(
-                        f'<div class="prob-text" style="color: #d9534f;">LSTM 이탈확률: {row["lstm_churn"]:.2%}</div>',
+                        f'<div class="prob-text" style="color: {color};">LSTM 이탈확률: {row["lstm_churn"]:.2%}</div>',
                         unsafe_allow_html=True)
                 if is_trans:
+                    color = "#28a745" if row['trans_churn'] <= 0.5 else "#d9534f"
                     st.markdown(
-                        f'<div class="prob-text" style="color: #d9534f;">Transformer 이탈확률: {row["trans_churn"]:.2%}</div>',
+                        f'<div class="prob-text" style="color: {color};">Transformer 이탈확률: {row["trans_churn"]:.2%}</div>',
                         unsafe_allow_html=True)
             else:
                 st.markdown(
