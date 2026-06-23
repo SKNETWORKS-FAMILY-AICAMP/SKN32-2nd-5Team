@@ -23,57 +23,6 @@
 | 김지혜 | 데이터 정제 및 중복 제거, LSTM 모델 학습 |
 | 신누리 | 데이터 정제 및 중복 제거, 데이터 분할 및 분포 조정, 언어 모델 입력을 위한 변환, Transformer Encoder (Scratch) 모델 학습 |
 
-## 📜 Git Convention
-1\. main은 직접 수정 금지    
-2\. 각자 브랜치 생성 후 작업  
-3\. 작업 시작 전에는 항상 main에서 pull 받기  
-4\. 프로젝트 시작 전 개발환경 동일하게 설정(. gitignore, requests.txt 등)  
-5\. 브랜치 통합은 모두 있을 때 진행
-
-## 🧑‍💻 개발환경 설정
-#### 1. 로컬 환경에 Git 복사하기
-```bash
-# 프로젝트를 생성할 위치에서 실행  
-
-git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN32-2nd-5Team.git
-```
-#### 2. 가상 환경 만들기 & 활성화
-```bash
-# 가상 환경 생성
-python -m venv .venv
-
-# 자동 활성화가 되지 않았을 경우
-.venv\Scripts\activate.bat
-```
-#### 3. 패키지 설치
-```bash
-pip install -r requirements.txt
-```
-#### 4. main 브랜치를 복사한 개인용 브랜치 생성
-```bash
-# 브랜치 생성 후 이동
-git checkout -b 개인용브랜치이름  
-```
-#### 5. 생성된 개인 브랜치에서 작업 후 원격 브랜치에 업로드
-```bash
-# 작업 내용 모두 스테이징
-git add .   
-
-# 커밋 메세지 작성
-git commit -m "커밋 메세지"  
-
-# 개인 원격 브랜치에 푸시
-git push origin 개인용브랜치이름   
-```
-## 📅 프로젝트 WBS (Work Breakdown Structure)
-| 작업 | 담당/내용 | 6/17 | 6/18 | 6/19 | 6/20~21 | 6/22 | 6/23 |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| 주제 선정 & 배경 조사 | 주제 확정, 자료 리서치 | ▓ | ▓ | | | |
-| 데이터 전처리 | 결측치·파생변수 처리 | | | ▓ | ▓ | |
-| 머신러닝 / 모델 선정 | 모델 학습·비교·선정 | | | ▓ | ▓ | |
-| 프론트 구축 | Streamlit 화면 개발 | | | |  | ▓ |
-| 산출물 | 산출물 작성 | | ▓ | ▓ | | ▓ | ▓ |
-
 ---
 
 ## 🛠 기술 스택
@@ -100,7 +49,6 @@ git push origin 개인용브랜치이름
 | **scikit-learn** | 1.9.0    | 평가 지표 출력              |
 | **torch**        | 2.11.0   | 모델 구성, 학습 및 테스트       |
 | **transformers** | >= 5.121 | 데이터 토큰화 및 사전 학습 모델 로드 |
-
 
 ---
 
@@ -153,6 +101,64 @@ SKN32-2nd-5Team
 ├── .gitignore
 ├── README.md
 └── requirements.txt
+```
+
+---
+
+## 📅 프로젝트 WBS (Work Breakdown Structure)
+| 작업 | 담당/내용 | 6/17 | 6/18 | 6/19 | 6/20~21 | 6/22 | 6/23 |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| 주제 선정 & 배경 조사 | 주제 확정, 자료 리서치 | ▓ | ▓ | | | |
+| 데이터 전처리 | 결측치·파생변수 처리 | | | ▓ | ▓ | |
+| 머신러닝 / 모델 선정 | 모델 학습·비교·선정 | | | ▓ | ▓ | |
+| 프론트 구축 | Streamlit 화면 개발 | | | |  | ▓ |
+| 산출물 | 산출물 작성 | | ▓ | ▓ | | ▓ | ▓ |
+
+---
+
+## 📜 Git Convention
+1\. main은 직접 수정 금지    
+2\. 각자 브랜치 생성 후 작업  
+3\. 작업 시작 전에는 항상 main에서 pull 받기  
+4\. 프로젝트 시작 전 개발환경 동일하게 설정(. gitignore, requests.txt 등)  
+5\. 브랜치 통합은 모두 있을 때 진행
+
+---
+
+## 🧑‍💻 개발환경 설정
+#### 1. 로컬 환경에 Git 복사하기
+```bash
+# 프로젝트를 생성할 위치에서 실행  
+
+git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN32-2nd-5Team.git
+```
+#### 2. 가상 환경 만들기 & 활성화
+```bash
+# 가상 환경 생성
+python -m venv .venv
+
+# 자동 활성화가 되지 않았을 경우
+.venv\Scripts\activate.bat
+```
+#### 3. 패키지 설치
+```bash
+pip install -r requirements.txt
+```
+#### 4. main 브랜치를 복사한 개인용 브랜치 생성
+```bash
+# 브랜치 생성 후 이동
+git checkout -b 개인용브랜치이름  
+```
+#### 5. 생성된 개인 브랜치에서 작업 후 원격 브랜치에 업로드
+```bash
+# 작업 내용 모두 스테이징
+git add .   
+
+# 커밋 메세지 작성
+git commit -m "커밋 메세지"  
+
+# 개인 원격 브랜치에 푸시
+git push origin 개인용브랜치이름   
 ```
 
 ---
@@ -215,10 +221,10 @@ cd preprocessing
 
 ---
 
-## 데이터 전처리 결과 보고서
+## 🔗 데이터 전처리 결과 보고서
 - [바로가기](reports/data-preprocessing/preprocessing_report.md)
 
 ---
 
-## 인공지능 학습 결과서
+## 🔗 인공지능 학습 결과서
 - [바로가기](<reports/model-training-results/(Churn-Zero_AI)인공지능_학습_결과_보고서.pdf>)
