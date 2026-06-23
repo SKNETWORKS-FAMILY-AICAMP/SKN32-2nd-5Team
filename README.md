@@ -3,7 +3,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB)
 ![Pandas](https://img.shields.io/badge/Pandas-3.0.3-150458)
-![NumPy](https://img.shields.io/badge/NumPy-2.5.0-013243)
+![json](https://img.shields.io/badge/json)
 ![matplotlib](https://img.shields.io/badge/matplotlib-3.11.0-FF7F0E)
 ![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.12.1-EE4C2C)
@@ -79,24 +79,27 @@ git push origin 개인용브랜치이름
 
 ### Frontend / UI
 
-| 기술 | 버전 | 사용 목적 |
-|------|------|-----------|
-| **Streamlit** | 1.x | 웹 대시보드 UI 프레임워크. 사이드바 네비게이션 |
-| **matplotlib** | 3.11.0 | Valid Loss, F1 Score 그래프 출력 |
+| 기술             | 버전     | 사용 목적                                          |
+|----------------|--------|------------------------------------------------|
+| **Streamlit**  | 1.x    | 웹 대시보드 UI 프레임워크.                               |
+| **matplotlib** | 3.11.0 | 문자 및 토큰 비교, Loss(Train, Valid), F1 Score 그래프 출력 |
+| **tqdm**       | 4.68.3 | 콘솔 UI 기반의 실시간 학습 진행률 및 소요 시간 모니터링 기능 구현 |
 
 ### Data Processing
 
-| 기술 | 버전 | 사용 목적 |
-|------|------|-----------|
-| **pandas** | 3.0.3 | CSV 로드 |
-| **NumPy** | 2.5.0 | 수치 연산 및 모델 학습 시 배열 처리 |
+| 기술         | 버전    | 사용 목적   |
+|------------|-------|---------|
+| **pandas** | 3.0.3 | CSV 로드  |
+| **json**   | 내장 버전 | JSON 로드 |
 
 ### Machine Learning
 
-| 기술 | 버전 | 사용 목적 |
-|------|------|-----------|
-| **scikit-learn** | 1.9.0 | 전처리기(`ColumnTransformer`)와 분류기를 하나의 `Pipeline`으로 묶어 학습·추론 일관성 보장 |
-| **transformers** | - | 수치형 컬럼(중앙값 대치 → `StandardScaler`)과 범주형 컬럼(최빈값 대치 → `OneHotEncoder`) 병렬 전처리 |
+| 기술               | 버전       | 사용 목적                 |
+|------------------|----------|-----------------------|
+| **scikit-learn** | 1.9.0    | 평가 지표 출력              |
+| **torch**        | 2.11.0   | 모델 구성, 학습 및 테스트       |
+| **transformers** | >= 5.121 | 데이터 토큰화 및 사전 학습 모델 로드 |
+
 
 ---
 
