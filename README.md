@@ -110,6 +110,7 @@ SKN32-2nd-5Team
 ├── data/
 │   ├── Training.json
 │   └── Validation.json
+|
 ├── model/
 │   ├── weights/
 │   │   ├── bert_best_FocalLoss_Epoch4.pt
@@ -123,6 +124,7 @@ SKN32-2nd-5Team
 │   ├── train_lstm.py
 │   ├── train_transformer.py
 │   └── utils.py
+|
 ├── output/
 ├── preprocessing/
 │   ├── data_analysis.py
@@ -130,6 +132,7 @@ SKN32-2nd-5Team
 │   ├── labeling.py
 │   ├── prepare_dataset.py
 │   └── sklearn_validate_labels.py
+|
 ├── reports/
 │   ├── data-preprocessing/
 │   │   ├── analysis_result.json
@@ -140,11 +143,13 @@ SKN32-2nd-5Team
 │   └── model-training-results/
 │       ├── (Churn-Zero_AI)인공지능_학습_결과_보고서.pdf
 │       └── 학습된 인공지능 모델.md
+|
 ├── temp/
 ├── web/
 │   ├── app.py
 │   ├── voc_test.json
 │   └── voc_test_result.json
+|
 ├── .gitignore
 ├── README.md
 └── requirements.txt
