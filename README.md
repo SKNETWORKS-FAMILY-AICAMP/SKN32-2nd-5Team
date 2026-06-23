@@ -82,21 +82,25 @@ SKN32-2nd-5Team
 │   └── sklearn_validate_labels.py
 |
 ├── reports/
-│   ├── data-preprocessing/
-│   │   ├── analysis_result.json
-│   │   ├── char_length_distribution.png
-│   │   ├── label_distribution.png
-│   │   ├── preprocessing_report.md
-│   │   └── token_length_distribution.png
-│   └── model-training-results/
-│       ├── (Churn-Zero_AI)인공지능_학습_결과_보고서.pdf
-│       └── 학습된 인공지능 모델.md
+│   └── data-preprocessing/
+│       └── analysis_result.json
 |
 ├── temp/
 ├── web/
 │   ├── app.py
 │   ├── voc_test.json
 │   └── voc_test_result.json
+│
+├── 산출물/
+│   ├── data-preprocessing
+│   │   ├── analysis_result.json
+│   │   ├── char_length_distribution.png
+│   │   ├── label_distribution.png
+│   │   ├── preprocessing_report.md
+│   │   └── token_length_distribution.png
+│   └── model-trainig-results
+│       ├── (Churn-Zero_AI)인공지능_학습_결과_보고서.pdf
+│       └── 학습된 인공지능 모델.md
 |
 ├── .gitignore
 ├── README.md
@@ -228,3 +232,8 @@ cd preprocessing
 
 ## 🔗 인공지능 학습 결과서
 - [바로가기](<산출물/model-training-results/(Churn-Zero_AI)인공지능_학습_결과_보고서.pdf>)
+
+---
+
+## 🔗 학습된 인공지능 모델
+- [바로가기](<산출물/model-training-results/학습된 인공지능 모델.md>)
