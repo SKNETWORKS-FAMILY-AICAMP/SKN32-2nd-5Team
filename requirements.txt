@@ -1,5 +1,4 @@
 pandas
-numpy
 matplotlib
 transformers
 scikit-learn
