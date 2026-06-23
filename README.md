@@ -110,28 +110,41 @@ SKN32-2nd-5Team
 ├── data/
 │   ├── Training.json
 │   └── Validation.json
-│
 ├── model/
+│   ├── weights/
+│   │   ├── bert_best_FocalLoss_Epoch4.pt
+│   │   ├── cnn_best.pt
+│   │   ├── lstm_best.pt
+│   │   └── transformer_best.pt
+│   ├── __init__.py
 │   ├── predict.py
 │   ├── train_bert.py
 │   ├── train_cnn.py
 │   ├── train_lstm.py
 │   ├── train_transformer.py
 │   └── utils.py
-│
 ├── output/
-│
-├── preprocessing
+├── preprocessing/
 │   ├── data_analysis.py
 │   ├── generate_report.py
 │   ├── labeling.py
 │   ├── prepare_dataset.py
 │   └── sklearn_validate_labels.py
-│
 ├── reports/
+│   ├── data-preprocessing/
+│   │   ├── analysis_result.json
+│   │   ├── char_length_distribution.png
+│   │   ├── label_distribution.png
+│   │   ├── preprocessing_report.md
+│   │   └── token_length_distribution.png
+│   └── model-training-results/
+│       ├── (Churn-Zero_AI)인공지능_학습_결과_보고서.pdf
+│       └── 학습된 인공지능 모델.md
 ├── temp/
 ├── web/
-│
+│   ├── app.py
+│   ├── voc_test.json
+│   └── voc_test_result.json
 ├── .gitignore
 ├── README.md
 └── requirements.txt
