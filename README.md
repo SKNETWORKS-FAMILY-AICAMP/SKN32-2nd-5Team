@@ -217,7 +217,7 @@ cd preprocessing
 
 ## 📝 모델 학습
 #### 1. model/{모델명}.py 실행하여 모델을 학습
-- preprocessing/output/ 경로에 생성된 실험 결과(.json)와 최적 모델 가중치(.pt) 파일 확인
+- model/output/ 경로에 생성된 실험 결과(.json)와 최적 모델 가중치(.pt) 파일 확인
 
 ---
 
