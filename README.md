@@ -3,12 +3,13 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB)
 ![Pandas](https://img.shields.io/badge/Pandas-3.0.3-150458)
-![json](https://img.shields.io/badge/json)
 ![matplotlib](https://img.shields.io/badge/matplotlib-3.11.0-FF7F0E)
 ![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.12.1-EE4C2C)
+![Transformers](https://img.shields.io/badge/Transformers-%3E%3D5.121-4D7298?logo=huggingface)
 ![Scikit--learn](https://img.shields.io/badge/Scikit--learn-1.9.0-F7931E)
 ![tqdm](https://img.shields.io/badge/tqdm-4.68.3-FFC107)
+![json](https://img.shields.io/badge/json-orange)
 
 ---
 
